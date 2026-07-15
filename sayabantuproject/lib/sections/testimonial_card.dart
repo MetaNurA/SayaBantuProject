@@ -1,0 +1,141 @@
+import 'package:flutter/material.dart';
+
+class TestimonialCard extends StatelessWidget {
+  final String category;
+  final String review;
+  final String name;
+  final String job;
+  final String avatar;
+  final Color avatarColor;
+  final bool useImage;
+
+  const TestimonialCard({
+    super.key,
+    required this.category,
+    required this.review,
+    required this.name,
+    required this.job,
+    required this.avatar,
+    this.avatarColor = const Color(0xffF97316),
+    this.useImage = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(28),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(22),
+        border: Border.all(
+          color: const Color(0xffE7EEF5),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Row(
+            children: [
+              Icon(Icons.star, color: Color(0xffFBBF24), size: 18),
+              Icon(Icons.star, color: Color(0xffFBBF24), size: 18),
+              Icon(Icons.star, color: Color(0xffFBBF24), size: 18),
+              Icon(Icons.star, color: Color(0xffFBBF24), size: 18),
+              Icon(Icons.star, color: Color(0xffFBBF24), size: 18),
+            ],
+          ),
+
+          const SizedBox(height: 20),
+
+          Expanded(
+            child: Text(
+              review,
+              style: const TextStyle(
+                color: Color(0xff475569),
+                fontSize: 15,
+                height: 1.8,
+              ),
+            ),
+          ),
+
+          const SizedBox(height: 18),
+
+          Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 14,
+              vertical: 8,
+            ),
+            decoration: BoxDecoration(
+              color: const Color(0xffFFF7ED),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Text(
+              category,
+              style: const TextStyle(
+                color: Color(0xffF97316),
+                fontWeight: FontWeight.w600,
+                fontSize: 13,
+              ),
+            ),
+          ),
+
+          const SizedBox(height: 20),
+
+          const Divider(height: 1),
+
+          const SizedBox(height: 18),
+
+          Row(
+            children: [
+              useImage
+                  ? CircleAvatar(
+                      radius: 22,
+                      backgroundImage: AssetImage(avatar),
+                    )
+                  : CircleAvatar(
+                      radius: 22,
+                      backgroundColor: avatarColor,
+                      child: Text(
+                        avatar,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+
+              const SizedBox(width: 14),
+
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      name,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
+
+                    const SizedBox(height: 4),
+
+                    Text(
+                      job,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        color: Color(0xff94A3B8),
+                        fontSize: 13,
+                        height: 1.4,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
