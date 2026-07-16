@@ -4,10 +4,12 @@ import '../screens/customer/offer_screen.dart';
 
 class JobCard extends StatelessWidget {
   final JobModel job;
+  final VoidCallback? onRefresh;
 
   const JobCard({
     super.key,
-    required this.job
+    required this.job,
+    this.onRefresh,
     });
 
   @override
@@ -69,13 +71,19 @@ class JobCard extends StatelessWidget {
 
                 Row(
                   children: [
-                    _info(Icons.attach_money, job.price),
+                    Text(
+                      job.price,
+                      style: const TextStyle(
+                        color: Colors.grey,
+                        fontSize: 14,
+                      ),
+                    ),
                     const SizedBox(width: 24),
-                    _info(Icons.people_alt_outlined, "${job.offer} Penawar"),
+                    _info(Icons.people_alt_outlined, "${job.offerCount} Penawar"),
                     const SizedBox(width: 24),
                     _info(Icons.access_time, job.time),
                   ],
-                ),
+                )
               ],
             ),
           ),
@@ -112,7 +120,9 @@ class JobCard extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (_) => const OfferScreen(),
+                      builder: (_) => OfferScreen(
+                        job: job,
+                      ),
                     ),
                     );
                 },

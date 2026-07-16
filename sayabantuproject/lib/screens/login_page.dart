@@ -4,7 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../theme/app_colors.dart';
 import '../widgets/custom_button.dart';
 import '../screens/register_page.dart';
-import '../screens/customer/customer_dashboard.dart';
+import '../sections/customer_dashboard.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -72,7 +72,7 @@ class _LoginScreenState extends State<LoginScreen> {
             width: 450,
             padding: const EdgeInsets.all(35),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: Theme.of(context).cardColor,
               borderRadius: BorderRadius.circular(24),
               boxShadow: [
                 BoxShadow(
@@ -96,10 +96,10 @@ class _LoginScreenState extends State<LoginScreen> {
                           borderRadius: BorderRadius.circular(18),
                         ),
                         child: const Icon(
-                          Icons.lock_open_rounded,
-                          color: Colors.white,
-                          size: 38,
-                        ),
+                            Icons.lock_open_rounded,
+                            color: Color(0xFFF97316),
+                            size: 38,
+                          ),
                       ),
                       const SizedBox(height: 20),
                       const Text(

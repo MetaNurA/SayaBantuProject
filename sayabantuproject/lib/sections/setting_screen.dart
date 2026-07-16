@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:provider/provider.dart';
 
-import '../../screens/login_page.dart';
-import '../../widgets/customer_sidebar.dart';
-import '../../widgets/dashboard_header.dart';
-import 'change_password_screen.dart';
-import '../../theme/theme_provider.dart';
+import '../screens/login_page.dart';
+import '../widgets/customer_sidebar.dart';
+import '../widgets/dashboard_header.dart';
+import '../screens/customer/change_password_screen.dart';
 
 class SettingScreen extends StatefulWidget {
 
@@ -140,21 +138,6 @@ class _SettingScreenState extends State<SettingScreen> {
                         setState(() {
                           notification = value;
                         });
-                      },
-                    ),
-                  ),
-
-                  settingTile(
-                    icon: Icons.dark_mode_outlined,
-                    title: "Mode Gelap",
-                    trailing: Consumer<ThemeProvider>(
-                      builder: (context, theme, child) {
-                        return Switch(
-                          value: theme.isDark,
-                          onChanged: (value) {
-                            theme.changeTheme(value);
-                          },
-                        );
                       },
                     ),
                   ),

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../screens/customer/customer_dashboard.dart';
-import '../screens/customer/notification_screen.dart';
-import '../screens/customer/setting_screen.dart';
+import '../sections/customer_dashboard.dart';
+import '../sections/notification_screen.dart';
+import '../sections/setting_screen.dart';
 
 class CustomerSidebar extends StatefulWidget {
   final String activeMenu;

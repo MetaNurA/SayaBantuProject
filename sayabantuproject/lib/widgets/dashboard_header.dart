@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
 import '../screens/customer/posting_jasa_dialog.dart';
+import '../models/job_model.dart';
 
 class DashboardHeader extends StatelessWidget {
-  const DashboardHeader({super.key});
+  final Function(JobModel)? onAddJob;
+
+  const DashboardHeader({
+    super.key,
+    this.onAddJob,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -37,11 +43,15 @@ class DashboardHeader extends StatelessWidget {
         ),
 
         ElevatedButton.icon(
-          onPressed: () {
-            showDialog(
+          onPressed: () async {
+            final JobModel? job = await showDialog<JobModel>(
               context: context,
               builder: (_) => const PostingJasaDialog(),
             );
+
+            if (job != null) {
+              onAddJob?.call(job);
+            }
           },
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color(0xffF97316),

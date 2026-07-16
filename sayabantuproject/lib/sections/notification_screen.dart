@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import '../../models/notification_model.dart';
-import '../../widgets/customer_sidebar.dart';
-import '../../widgets/dashboard_header.dart';
-import '../../widgets/notification_card.dart';
+import '../models/notification_model.dart';
+import '../widgets/customer_sidebar.dart';
+import '../widgets/page_header.dart';
+import '../widgets/notification_card.dart';
 
 class NotificationScreen extends StatelessWidget {
   NotificationScreen({super.key});
@@ -38,36 +38,25 @@ class NotificationScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xffF4F7FB),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+
       body: Row(
         children: [
           const CustomerSidebar(
-            activeMenu:"Notifikasi",
+            activeMenu: "Notifikasi",
           ),
 
           Expanded(
             child: Padding(
               padding: const EdgeInsets.all(30),
+
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const DashboardHeader(),
 
-                  const SizedBox(height: 30),
-
-                  const Text(
-                    "Notifikasi",
-                    style: TextStyle(
-                      fontSize: 30,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-
-                  const SizedBox(height: 10),
-
-                  const Text(
-                    "Semua aktivitas terbaru akan muncul di sini.",
-                    style: TextStyle(color: Colors.grey),
+                  const PageHeader(
+                    title: "Notifikasi",
+                    subtitle: "Semua aktivitas terbaru akan muncul di sini.",
                   ),
 
                   const SizedBox(height: 30),
@@ -75,8 +64,10 @@ class NotificationScreen extends StatelessWidget {
                   Expanded(
                     child: ListView.separated(
                       itemCount: notifications.length,
+
                       separatorBuilder: (_, __) =>
                           const SizedBox(height: 16),
+
                       itemBuilder: (context, index) {
                         return NotificationCard(
                           notification: notifications[index],

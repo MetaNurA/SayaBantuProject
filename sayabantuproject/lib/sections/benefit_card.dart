@@ -19,10 +19,10 @@ class BenefitCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(28),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(.06),
+        color: Theme.of(context).cardColor.withOpacity(.06),
         borderRadius: BorderRadius.circular(22),
         border: Border.all(
-          color: Colors.white.withOpacity(.08),
+          color: Theme.of(context).cardColor.withOpacity(.08),
         ),
       ),
       child: Column(
@@ -38,8 +38,8 @@ class BenefitCard extends StatelessWidget {
 
           Text(
             title,
-            style: const TextStyle(
-              color: Colors.white,
+            style: TextStyle(
+              color: Theme.of(context).cardColor,
               fontWeight: FontWeight.bold,
               fontSize: 22,
             ),

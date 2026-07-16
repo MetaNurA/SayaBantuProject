@@ -2,39 +2,25 @@ import 'package:flutter/material.dart';
 
 import '../../models/offer_model.dart';
 import '../../widgets/offer_card.dart';
+import '../../models/job_model.dart';
 
 class OfferScreen extends StatelessWidget {
-  const OfferScreen({super.key});
+  final JobModel job;
+
+  const OfferScreen({
+    super.key,
+    required this.job,
+    });
 
   @override
   Widget build(BuildContext context) {
-    final offers = [
-      const OfferModel(
-        name: "Pak Budi",
-        rating: 4.9,
-        jobsCompleted: 248,
-        price: "Rp170.000",
-      ),
-      const OfferModel(
-        name: "Mas Eko",
-        rating: 4.8,
-        jobsCompleted: 183,
-        price: "Rp160.000",
-      ),
-      const OfferModel(
-        name: "Pak Joko",
-        rating: 4.7,
-        jobsCompleted: 120,
-        price: "Rp150.000",
-      ),
-    ];
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
 
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).cardColor,
         foregroundColor: Colors.black,
         title: const Text(
           "Penawaran Mitra",
@@ -68,7 +54,7 @@ class OfferScreen extends StatelessWidget {
             const SizedBox(height: 30),
 
             Text(
-              "${offers.length} Mitra Mengirim Penawaran",
+              "${job.offers.length} Mitra Mengirim Penawaran",
               style: const TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 18,
@@ -79,12 +65,12 @@ class OfferScreen extends StatelessWidget {
 
             Expanded(
               child: ListView.separated(
-                itemCount: offers.length,
+                itemCount: job.offers.length,
                 separatorBuilder: (_, __) =>
                     const SizedBox(height: 20),
                 itemBuilder: (context, index) {
                   return OfferCard(
-                    offer: offers[index],
+                    offer: job.offers[index],
                   );
                 },
               ),

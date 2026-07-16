@@ -23,7 +23,7 @@ class HeroRight extends StatelessWidget {
                 color: const Color(0xff202C3F),
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(
-                  color: Colors.white.withOpacity(.08),
+                  color: Theme.of(context).cardColor.withOpacity(.08),
                 ),
                 boxShadow: [
                   BoxShadow(
@@ -116,9 +116,9 @@ class HeroRight extends StatelessWidget {
               ),
               child: const Row(
                 children: [
-                  Icon(
+                  const Icon(
                     Icons.verified,
-                    color: Colors.white,
+                    color: Color(0xFF1E293B),
                     size: 18,
                   ),
                   SizedBox(width: 8),
@@ -161,7 +161,7 @@ class HeroRight extends StatelessWidget {
                 color: const Color(0xff293549),
                 borderRadius: BorderRadius.circular(25),
                 border: Border.all(
-                  color: Colors.white12,
+                  color: Theme.of(context).cardColor.withOpacity(0.12)
                 ),
               ),
               child: const Row(

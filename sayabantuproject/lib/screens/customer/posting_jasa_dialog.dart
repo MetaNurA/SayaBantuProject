@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../../models/job_model.dart';
+import 'package:intl/intl.dart';
 
 class PostingJasaDialog extends StatefulWidget {
   const PostingJasaDialog({super.key});
@@ -34,26 +36,35 @@ class _PostingJasaDialogState extends State<PostingJasaDialog> {
   }
 
   void _postingJasa() {
-    if (_judulController.text.isEmpty ||
-        _deskripsiController.text.isEmpty ||
-        _budgetController.text.isEmpty ||
-        _lokasiController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Lengkapi semua data terlebih dahulu."),
-        ),
-      );
-      return;
-    }
-
+  if (_judulController.text.isEmpty ||
+      _deskripsiController.text.isEmpty ||
+      _budgetController.text.isEmpty ||
+      _lokasiController.text.isEmpty) {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-        content: Text("Posting jasa berhasil dibuat."),
+        content: Text("Lengkapi semua data terlebih dahulu."),
       ),
     );
-
-    Navigator.pop(context);
+    return;
   }
+
+  final job = JobModel(
+    title: _judulController.text,
+    description: _deskripsiController.text,
+    price: "Rp" + _budgetController.text,
+    status: "Mencari Mitra",
+    time: "Baru saja",
+    offers: [],
+  );
+
+  ScaffoldMessenger.of(context).showSnackBar(
+    const SnackBar(
+      content: Text("Posting jasa berhasil dibuat."),
+    ),
+  );
+
+  Navigator.pop(context, job);
+}
 
   @override
   Widget build(BuildContext context) {
@@ -222,7 +233,7 @@ class _PostingJasaDialogState extends State<PostingJasaDialog> {
                       label: const Text("Posting Sekarang"),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xffF97316),
-                        foregroundColor: Colors.white,
+                        foregroundColor: Theme.of(context).cardColor,
                         padding: const EdgeInsets.symmetric(vertical: 18),
                       ),
                     ),

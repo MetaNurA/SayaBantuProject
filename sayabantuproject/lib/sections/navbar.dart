@@ -25,7 +25,7 @@ class CustomNavbar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: 80,
-      color: Colors.white,
+      color: Theme.of(context).cardColor,
       padding: const EdgeInsets.symmetric(horizontal: 60),
       child: Center(
         child: ConstrainedBox(
@@ -44,7 +44,7 @@ class CustomNavbar extends StatelessWidget {
                     ),
                     child: const Icon(
                       Icons.handyman,
-                      color: Colors.white,
+                      color: Color(0xFFF97316),
                     ),
                   ),
                   const SizedBox(width: 12),

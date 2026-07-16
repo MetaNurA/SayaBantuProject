@@ -33,10 +33,10 @@ class FooterSection extends StatelessWidget {
                             color: const Color(0xffF97316),
                             borderRadius: BorderRadius.circular(14),
                           ),
-                          child: const Icon(
-                            Icons.home_repair_service,
-                            color: Colors.white,
-                          ),
+                         child: Icon(
+                          Icons.home_repair_service,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
                         ),
 
                         const SizedBox(width: 12),

@@ -1,12 +1,23 @@
 import 'package:flutter/material.dart';
-import '../../models/job_model.dart';
-import '../../widgets/customer_sidebar.dart';
-import '../../widgets/dashboard_header.dart';
-import '../../widgets/pekerjaan_card.dart';
-import '../../widgets/statistic_card.dart'; 
 
-class CustomerDashboard extends StatelessWidget {
-  CustomerDashboard({super.key});
+import '../models/job_model.dart';
+import '../models/offer_model.dart';
+
+import '../widgets/customer_sidebar.dart';
+import '../widgets/dashboard_header.dart';
+import '../widgets/pekerjaan_card.dart';
+import '../widgets/statistic_card.dart';
+
+class CustomerDashboard extends StatefulWidget {
+  const CustomerDashboard({super.key});
+
+  @override
+  State<CustomerDashboard> createState() =>
+      _CustomerDashboardState();
+}
+
+class _CustomerDashboardState
+    extends State<CustomerDashboard> {
 
   final List<JobModel> jobs = [
     JobModel(
@@ -15,7 +26,15 @@ class CustomerDashboard extends StatelessWidget {
       price: "Rp150.000",
       status: "Mencari Mitra",
       time: "2 jam lalu",
-      offer: 5,
+      offers: [
+        OfferModel(
+          name: "Andi Teknik AC",
+          rating: 4.9,
+          verified: true,
+          jobsCompleted: 120,
+          price: "Rp145.000",
+        ),
+      ],
     ),
     JobModel(
       title: "Perbaikan Kunci Rumah",
@@ -23,7 +42,7 @@ class CustomerDashboard extends StatelessWidget {
       price: "Rp120.000",
       status: "Sedang Dikerjakan",
       time: "Kemarin",
-      offer: 3,
+      offers: [],
     ),
     JobModel(
       title: "Pasang Lampu Teras",
@@ -31,16 +50,34 @@ class CustomerDashboard extends StatelessWidget {
       price: "Rp200.000",
       status: "Selesai",
       time: "3 hari lalu",
-      offer: 7,
+      offers: [],
     ),
   ];
 
+  void addJob(JobModel job) {
+    setState(() {
+      jobs.insert(0, job);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+
+    final int runningJobs = jobs
+        .where((job) => job.status == "Sedang Dikerjakan")
+        .length;
+
+    final int completedJobs = jobs
+        .where((job) => job.status == "Selesai")
+        .length;
+
     return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      backgroundColor:
+          Theme.of(context).scaffoldBackgroundColor,
+
       body: Row(
         children: [
+
           const CustomerSidebar(
             activeMenu: "Beranda",
           ),
@@ -48,15 +85,22 @@ class CustomerDashboard extends StatelessWidget {
           Expanded(
             child: Padding(
               padding: const EdgeInsets.all(30),
+
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment:
+                    CrossAxisAlignment.start,
+
                 children: [
-                  const DashboardHeader(),
+
+                  DashboardHeader(
+                    onAddJob: addJob,
+                  ),
 
                   const SizedBox(height: 30),
 
                   Row(
                     children: [
+
                       Expanded(
                         child: StatisticCard(
                           icon: Icons.assignment,
@@ -68,10 +112,10 @@ class CustomerDashboard extends StatelessWidget {
 
                       const SizedBox(width: 20),
 
-                      const Expanded(
+                      Expanded(
                         child: StatisticCard(
                           icon: Icons.settings,
-                          value: "1",
+                          value: runningJobs.toString(),
                           title: "Sedang Berjalan",
                           color: Colors.orange,
                         ),
@@ -79,10 +123,10 @@ class CustomerDashboard extends StatelessWidget {
 
                       const SizedBox(width: 20),
 
-                      const Expanded(
+                      Expanded(
                         child: StatisticCard(
                           icon: Icons.check_circle,
-                          value: "1",
+                          value: completedJobs.toString(),
                           title: "Selesai",
                           color: Colors.green,
                         ),
@@ -95,8 +139,10 @@ class CustomerDashboard extends StatelessWidget {
                   Expanded(
                     child: ListView.separated(
                       itemCount: jobs.length,
-                      separatorBuilder: (context, index) =>
+
+                      separatorBuilder: (_, __) =>
                           const SizedBox(height: 18),
+
                       itemBuilder: (context, index) {
                         return JobCard(
                           job: jobs[index],

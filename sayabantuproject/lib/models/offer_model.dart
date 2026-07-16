@@ -4,6 +4,7 @@ class OfferModel {
   final int jobsCompleted;
   final String price;
   final bool verified;
+  
 
   const OfferModel({
     required this.name,
@@ -12,4 +13,5 @@ class OfferModel {
     required this.price,
     this.verified = true,
   });
+  
 }

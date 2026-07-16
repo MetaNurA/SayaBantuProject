@@ -7,7 +7,8 @@ List<JobModel> jobs = [
     price: "Rp150.000",
     status: "Mencari Mitra",
     time: "2 jam lalu",
-    offer: 5,
+    offers: [
+    ],
   ),
   JobModel(
     title: "Perbaikan Kunci Rumah",
@@ -15,7 +16,8 @@ List<JobModel> jobs = [
     price: "Rp120.000",
     status: "Sedang Dikerjakan",
     time: "Kemarin",
-    offer: 3,
+    offers: [
+    ],
   ),
   JobModel(
     title: "Pasang Lampu Teras",
@@ -23,6 +25,7 @@ List<JobModel> jobs = [
     price: "Rp200.000",
     status: "Selesai",
     time: "3 hari lalu",
-    offer: 7,
+    offers: [
+    ],
   ),
 ];

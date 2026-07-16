@@ -3,7 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../theme/app_colors.dart';
 import '../widgets/custom_button.dart';
 import 'login_page.dart';
-import 'customer/customer_dashboard.dart';
+import '../sections/customer_dashboard.dart';
 
 
 class RegisterScreen extends StatefulWidget {
@@ -73,7 +73,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             width: 460,
             padding: const EdgeInsets.all(35),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: Theme.of(context).cardColor,
               borderRadius: BorderRadius.circular(24),
               boxShadow: [
                 BoxShadow(
@@ -98,9 +98,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           color: AppColors.primary,
                           borderRadius: BorderRadius.circular(18),
                         ),
-                        child: const Icon(
+                        child: Icon(
                           Icons.person_add_alt_1,
-                          color: Colors.white,
+                          color: Theme.of(context).cardColor,
                           size: 36,
                         ),
                       ),

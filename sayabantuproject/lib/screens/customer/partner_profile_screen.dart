@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'customer_dashboard.dart';
+import '../../sections/customer_dashboard.dart';
 
 class PartnerProfileScreen extends StatelessWidget {
   const PartnerProfileScreen({super.key});
@@ -12,7 +12,7 @@ class PartnerProfileScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text("Profil Mitra"),
         centerTitle: true,
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).cardColor,
         foregroundColor: Colors.black,
         elevation: 0,
       ),
@@ -190,7 +190,7 @@ class PartnerProfileScreen extends StatelessWidget {
                 ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xffF97316),
-                  foregroundColor: Colors.white,
+                  foregroundColor: Theme.of(context).cardColor,
                 ),
                 onPressed: () async {
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -261,7 +261,7 @@ class _Statistic extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(18),
       ),
       child: Column(

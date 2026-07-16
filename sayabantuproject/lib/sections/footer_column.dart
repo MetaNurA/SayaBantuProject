@@ -18,10 +18,10 @@ class FooterColumn extends StatelessWidget {
         children: [
           Text(
             title,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 18,
+            style: TextStyle(
+              color: Theme.of(context).cardColor,
               fontWeight: FontWeight.bold,
+              fontSize: 22,
             ),
           ),
 
