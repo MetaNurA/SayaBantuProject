@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../models/notification_model.dart';
+import '../models/sidebar_menu.dart';
+
 import '../widgets/customer_sidebar.dart';
 import '../widgets/page_header.dart';
 import '../widgets/notification_card.dart';
@@ -37,15 +39,12 @@ class NotificationScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-
-      body: Row(
-        children: [
-          const CustomerSidebar(
-            activeMenu: "Notifikasi",
-          ),
-
+    return Container(
+        color: Theme.of(context).scaffoldBackgroundColor,
+        padding: const EdgeInsets.all(30),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
           Expanded(
             child: Padding(
               padding: const EdgeInsets.all(30),

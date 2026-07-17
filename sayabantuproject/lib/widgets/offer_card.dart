@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import '../models/offer_model.dart';
 import '../screens/customer/partner_profile_screen.dart';
+import '../models/job_model.dart';
 
 class OfferCard extends StatelessWidget {
+  final JobModel job;
   final OfferModel offer;
 
   const OfferCard({
     super.key,
+    required this.job,
     required this.offer,
   });
 
@@ -145,16 +148,15 @@ class OfferCard extends StatelessWidget {
                         ),
                         ElevatedButton(
                           onPressed: () {
-                            Navigator.pop(context);
+                          // Tutup dialog
+                          Navigator.pop(context);
 
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                  "${offer.name} berhasil dipilih.",
-                                ),
-                              ),
-                            );
-                          },
+                          // Ubah status pekerjaan
+                          job.status = "Sedang Dikerjakan";
+
+                          // Tutup OfferScreen dan kirim hasil ke Dashboard
+                          Navigator.pop(context, true);
+                        },
                           child: const Text("Ya"),
                         ),
                       ],

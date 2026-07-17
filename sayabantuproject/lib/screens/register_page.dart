@@ -4,6 +4,7 @@ import '../theme/app_colors.dart';
 import '../widgets/custom_button.dart';
 import 'login_page.dart';
 import '../sections/customer_dashboard.dart';
+import '../sections/customer_main_screen.dart';
 
 
 class RegisterScreen extends StatefulWidget {
@@ -58,7 +59,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Navigator.pushReplacement(
     context,
     MaterialPageRoute(
-      builder: (context) => CustomerDashboard(),
+      builder: (context) => CustomerMainDashboard(),
     ),
   );
 }

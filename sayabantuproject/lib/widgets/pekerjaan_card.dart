@@ -116,15 +116,19 @@ class JobCard extends StatelessWidget {
               const SizedBox(height: 18),
 
               ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
+                onPressed: () async {
+                  final result = await Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (_) => OfferScreen(
                         job: job,
                       ),
                     ),
-                    );
+                  );
+
+                  if (result == true) {
+                    onRefresh?.call();
+                  }
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xffF97316),

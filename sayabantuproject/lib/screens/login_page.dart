@@ -5,6 +5,7 @@ import '../theme/app_colors.dart';
 import '../widgets/custom_button.dart';
 import '../screens/register_page.dart';
 import '../sections/customer_dashboard.dart';
+import '../sections/customer_main_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -35,24 +36,24 @@ class _LoginScreenState extends State<LoginScreen> {
     final email = prefs.getString("email");
     final password = prefs.getString("password");
 
-    if (_emailController.text.trim().isEmpty ||
-        _passwordController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Email dan Password wajib diisi"),
-        ),
-      );
-      return;
-    }
+    print("===== DATA LOGIN =====");
+    print("Email tersimpan    : $email");
+    print("Password tersimpan : $password");
+    print("Email input        : ${_emailController.text.trim()}");
+    print("Password input     : ${_passwordController.text.trim()}");
 
     if (_emailController.text.trim() == email &&
-        _passwordController.text == password) {
+        _passwordController.text.trim() == password) {
+
+      await prefs.setBool("isLoggedIn", true);
+
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (_) => CustomerDashboard(),
+          builder: (_) => const CustomerMainDashboard(),
         ),
       );
+
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -61,7 +62,6 @@ class _LoginScreenState extends State<LoginScreen> {
       );
     }
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

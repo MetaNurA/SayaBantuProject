@@ -34,9 +34,9 @@ class OfferScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
 
-            const Text(
-              "Service AC Bocor",
-              style: TextStyle(
+            Text(
+              job.title,
+              style: const TextStyle(
                 fontSize: 28,
                 fontWeight: FontWeight.bold,
               ),
@@ -44,13 +44,12 @@ class OfferScreen extends StatelessWidget {
 
             const SizedBox(height: 8),
 
-            const Text(
-              "Budget : Rp150.000",
-              style: TextStyle(
+            Text(
+              "Budget : ${job.price}",
+              style: const TextStyle(
                 color: Colors.grey,
               ),
             ),
-
             const SizedBox(height: 30),
 
             Text(
@@ -70,6 +69,7 @@ class OfferScreen extends StatelessWidget {
                     const SizedBox(height: 20),
                 itemBuilder: (context, index) {
                   return OfferCard(
+                    job: job,
                     offer: job.offers[index],
                   );
                 },

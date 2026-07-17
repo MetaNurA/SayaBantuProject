@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import '../models/job_model.dart';
 import '../models/offer_model.dart';
 
-import '../widgets/customer_sidebar.dart';
 import '../widgets/dashboard_header.dart';
 import '../widgets/pekerjaan_card.dart';
 import '../widgets/statistic_card.dart';
@@ -71,91 +70,73 @@ class _CustomerDashboardState
         .where((job) => job.status == "Selesai")
         .length;
 
-    return Scaffold(
-      backgroundColor:
-          Theme.of(context).scaffoldBackgroundColor,
+    return Container(
+    color: Theme.of(context).scaffoldBackgroundColor,
+    padding: const EdgeInsets.all(30),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        DashboardHeader(
+          onAddJob: addJob,
+        ),
 
-      body: Row(
-        children: [
+        const SizedBox(height: 30),
 
-          const CustomerSidebar(
-            activeMenu: "Beranda",
-          ),
-
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(30),
-
-              child: Column(
-                crossAxisAlignment:
-                    CrossAxisAlignment.start,
-
-                children: [
-
-                  DashboardHeader(
-                    onAddJob: addJob,
-                  ),
-
-                  const SizedBox(height: 30),
-
-                  Row(
-                    children: [
-
-                      Expanded(
-                        child: StatisticCard(
-                          icon: Icons.assignment,
-                          value: jobs.length.toString(),
-                          title: "Total Posting",
-                          color: Colors.blue,
-                        ),
-                      ),
-
-                      const SizedBox(width: 20),
-
-                      Expanded(
-                        child: StatisticCard(
-                          icon: Icons.settings,
-                          value: runningJobs.toString(),
-                          title: "Sedang Berjalan",
-                          color: Colors.orange,
-                        ),
-                      ),
-
-                      const SizedBox(width: 20),
-
-                      Expanded(
-                        child: StatisticCard(
-                          icon: Icons.check_circle,
-                          value: completedJobs.toString(),
-                          title: "Selesai",
-                          color: Colors.green,
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  const SizedBox(height: 30),
-
-                  Expanded(
-                    child: ListView.separated(
-                      itemCount: jobs.length,
-
-                      separatorBuilder: (_, __) =>
-                          const SizedBox(height: 18),
-
-                      itemBuilder: (context, index) {
-                        return JobCard(
-                          job: jobs[index],
-                        );
-                      },
-                    ),
-                  ),
-                ],
+        Row(
+          children: [
+            Expanded(
+              child: StatisticCard(
+                icon: Icons.assignment,
+                value: jobs.length.toString(),
+                title: "Total Posting",
+                color: Colors.blue,
               ),
             ),
+
+            const SizedBox(width: 20),
+
+            Expanded(
+              child: StatisticCard(
+                icon: Icons.settings,
+                value: runningJobs.toString(),
+                title: "Sedang Berjalan",
+                color: Colors.orange,
+              ),
+            ),
+
+            const SizedBox(width: 20),
+
+            Expanded(
+              child: StatisticCard(
+                icon: Icons.check_circle,
+                value: completedJobs.toString(),
+                title: "Selesai",
+                color: Colors.green,
+              ),
+            ),
+          ],
+        ),
+
+        const SizedBox(height: 30),
+
+                Expanded(
+          child: ListView.separated(
+            itemCount: jobs.length,
+            separatorBuilder: (_, __) =>
+                const SizedBox(height: 18),
+            itemBuilder: (context, index) {
+              return JobCard(
+                job: jobs[index],
+                onRefresh: () {
+                  setState(() {
+                  });
+                },
+              );
+            },
           ),
-        ],
-      ),
-    );
-  }
+        ),
+      ],
+    ),
+  );
+}
 }

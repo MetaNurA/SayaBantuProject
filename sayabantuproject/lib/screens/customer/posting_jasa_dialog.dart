@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+
 import '../../models/job_model.dart';
-import 'package:intl/intl.dart';
 
 class PostingJasaDialog extends StatefulWidget {
   const PostingJasaDialog({super.key});
@@ -14,6 +17,8 @@ class _PostingJasaDialogState extends State<PostingJasaDialog> {
   final _deskripsiController = TextEditingController();
   final _budgetController = TextEditingController();
   final _lokasiController = TextEditingController();
+
+  File? _selectedImage;
 
   String _kategori = "Service AC";
 
@@ -35,36 +40,51 @@ class _PostingJasaDialogState extends State<PostingJasaDialog> {
     super.dispose();
   }
 
-  void _postingJasa() {
-  if (_judulController.text.isEmpty ||
-      _deskripsiController.text.isEmpty ||
-      _budgetController.text.isEmpty ||
-      _lokasiController.text.isEmpty) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text("Lengkapi semua data terlebih dahulu."),
-      ),
+  Future<void> _pickImage() async {
+    final picker = ImagePicker();
+
+    final XFile? image = await picker.pickImage(
+      source: ImageSource.gallery,
     );
-    return;
+
+    if (image != null) {
+      setState(() {
+        _selectedImage = File(image.path);
+      });
+    }
   }
 
-  final job = JobModel(
-    title: _judulController.text,
-    description: _deskripsiController.text,
-    price: "Rp" + _budgetController.text,
-    status: "Mencari Mitra",
-    time: "Baru saja",
-    offers: [],
-  );
+  void _postingJasa() {
+    if (_judulController.text.isEmpty ||
+        _deskripsiController.text.isEmpty ||
+        _budgetController.text.isEmpty ||
+        _lokasiController.text.isEmpty ||
+        _selectedImage == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Lengkapi semua data dan unggah foto kendala."),
+        ),
+      );
+      return;
+    }
 
-  ScaffoldMessenger.of(context).showSnackBar(
-    const SnackBar(
-      content: Text("Posting jasa berhasil dibuat."),
-    ),
-  );
+    final job = JobModel(
+      title: _judulController.text,
+      description: _deskripsiController.text,
+      price: "Rp${_budgetController.text}",
+      status: "Mencari Mitra",
+      time: "Baru saja",
+      offers: [],
+    );
 
-  Navigator.pop(context, job);
-}
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text("Posting jasa berhasil dibuat."),
+      ),
+    );
+
+    Navigator.pop(context, job);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -126,7 +146,6 @@ class _PostingJasaDialogState extends State<PostingJasaDialog> {
               const SizedBox(height: 20),
 
               const Text("Deskripsi"),
-
               const SizedBox(height: 8),
 
               TextField(
@@ -141,7 +160,6 @@ class _PostingJasaDialogState extends State<PostingJasaDialog> {
               const SizedBox(height: 20),
 
               const Text("Budget"),
-
               const SizedBox(height: 8),
 
               TextField(
@@ -156,7 +174,6 @@ class _PostingJasaDialogState extends State<PostingJasaDialog> {
               const SizedBox(height: 20),
 
               const Text("Lokasi"),
-
               const SizedBox(height: 8),
 
               TextField(
@@ -171,42 +188,41 @@ class _PostingJasaDialogState extends State<PostingJasaDialog> {
               const SizedBox(height: 20),
 
               const Text("Foto Kendala"),
-
               const SizedBox(height: 8),
 
               InkWell(
-                onTap: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text("Upload foto (dummy)."),
-                    ),
-                  );
-                },
+                onTap: _pickImage,
                 child: Container(
-                  height: 130,
+                  height: 180,
                   width: double.infinity,
                   decoration: BoxDecoration(
-                    border: Border.all(
-                      color: Colors.grey.shade300,
-                      style: BorderStyle.solid,
-                    ),
+                    border: Border.all(color: Colors.grey.shade300),
                     borderRadius: BorderRadius.circular(14),
                   ),
-                  child: const Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.cloud_upload_outlined,
-                        size: 40,
-                        color: Colors.grey,
-                      ),
-                      SizedBox(height: 10),
-                      Text(
-                        "Klik untuk upload foto",
-                        style: TextStyle(color: Colors.grey),
-                      ),
-                    ],
-                  ),
+                  child: _selectedImage == null
+                      ? const Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.cloud_upload_outlined,
+                              size: 40,
+                              color: Colors.grey,
+                            ),
+                            SizedBox(height: 10),
+                            Text(
+                              "Klik untuk upload foto",
+                              style: TextStyle(color: Colors.grey),
+                            ),
+                          ],
+                        )
+                      : ClipRRect(
+                          borderRadius: BorderRadius.circular(14),
+                          child: Image.file(
+                            _selectedImage!,
+                            fit: BoxFit.cover,
+                            width: double.infinity,
+                          ),
+                        ),
                 ),
               ),
 
@@ -233,7 +249,7 @@ class _PostingJasaDialogState extends State<PostingJasaDialog> {
                       label: const Text("Posting Sekarang"),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xffF97316),
-                        foregroundColor: Theme.of(context).cardColor,
+                        foregroundColor: Colors.white,
                         padding: const EdgeInsets.symmetric(vertical: 18),
                       ),
                     ),

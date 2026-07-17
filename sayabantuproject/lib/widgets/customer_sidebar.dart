@@ -4,13 +4,16 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../sections/customer_dashboard.dart';
 import '../sections/notification_screen.dart';
 import '../sections/setting_screen.dart';
+import '../models/sidebar_menu.dart';
 
 class CustomerSidebar extends StatefulWidget {
-  final String activeMenu;
+  final SidebarMenu activeMenu;
+  final Function(SidebarMenu) onMenuSelected;
 
   const CustomerSidebar({
     super.key,
     required this.activeMenu,
+    required this.onMenuSelected,
   });
 
   @override
@@ -117,23 +120,21 @@ class _CustomerSidebarState extends State<CustomerSidebar> {
             context,
             icon: Icons.home_outlined,
             title: "Beranda",
-            page: CustomerDashboard(),
+            menu: SidebarMenu.beranda,
           ),
-
           _menu(
             context,
-            icon: Icons.notifications_none,
+            icon: Icons.home_outlined,
             title: "Notifikasi",
-            page: NotificationScreen(),
+            menu: SidebarMenu.notifikasi,
           ),
 
           _menu(
             context,
             icon: Icons.settings_outlined,
             title: "Pengaturan",
-            page: const SettingScreen(),
+            menu: SidebarMenu.pengaturan,
           ),
-
           const Spacer(),
 
           Padding(
@@ -152,22 +153,17 @@ class _CustomerSidebarState extends State<CustomerSidebar> {
   }
 
   Widget _menu(
-    BuildContext context, {
-    required IconData icon,
-    required String title,
-    required Widget page,
-  }) {
-    final bool active = widget.activeMenu == title;
+      BuildContext context, {
+      required IconData icon,
+      required String title,
+      required SidebarMenu menu,
+    }) {
+    final bool active = widget.activeMenu == menu;
 
     return InkWell(
       onTap: () {
         if (!active) {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (_) => page,
-            ),
-          );
+          widget.onMenuSelected(menu);
         }
       },
       borderRadius: BorderRadius.circular(12),
