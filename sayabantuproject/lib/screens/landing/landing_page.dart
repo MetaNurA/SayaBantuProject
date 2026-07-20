@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 
-import '../sections/category_section.dart';
-import '../sections/footer_section.dart';
-import '../sections/hero_section.dart';
-import '../sections/how_it_works_section.dart';
-import '../sections/navbar.dart';
-import '../sections/partner_cta_section.dart';
-import '../sections/stats_section.dart';
-import '../sections/testimonial_section.dart';
-import '../sections/why_section.dart';
+import '../../sections/category_section.dart';
+import '../../sections/footer_section.dart';
+import '../../sections/hero_section.dart';
+import '../../sections/how_it_works_section.dart';
+import '../../sections/navbar.dart';
+import '../../sections/partner_cta_section.dart';
+import '../../sections/stats_section.dart';
+import '../../sections/testimonial_section.dart';
+import '../../sections/why_section.dart';
 
 class LandingPage extends StatefulWidget {
   const LandingPage({super.key});
@@ -75,7 +75,10 @@ class _LandingPageState extends State<LandingPage> {
 
             Container(
               key: mitraKey,
-              child: const PartnerCTASection(),
+              child: PartnerCTASection(
+                onDaftarMitra: () => scrollTo(mitraKey),
+                onPelajari: () => scrollTo(caraKerjaKey),
+              ),
             ),
 
             Container(

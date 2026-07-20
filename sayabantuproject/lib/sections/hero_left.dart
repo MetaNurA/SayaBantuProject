@@ -204,20 +204,6 @@ class HeroLeft extends StatelessWidget {
 
         const SizedBox(height: 24),
 
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children: [
-            chip("Service AC"),
-            chip("Perbaikan Kunci"),
-            chip("Cat Rumah"),
-            chip("Pasang Lampu"),
-            chip("Plumbing"),
-          ],
-        ),
-
-        const SizedBox(height: 30),
-
         const Row(
           children: [
             HeroInfo(

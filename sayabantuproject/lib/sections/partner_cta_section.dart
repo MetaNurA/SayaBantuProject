@@ -5,7 +5,14 @@ import '../widgets/custom_button.dart';
 
 
 class PartnerCTASection extends StatelessWidget {
-  const PartnerCTASection({super.key});
+  final VoidCallback onDaftarMitra;
+  final VoidCallback onPelajari;
+
+  const PartnerCTASection({
+    super.key,
+    required this.onDaftarMitra,
+    required this.onPelajari,
+    });
 
   @override
   Widget build(BuildContext context) {
@@ -106,7 +113,7 @@ class PartnerCTASection extends StatelessWidget {
                           height: 60,
                           outlined: true,
                           textColor: Colors.white,
-                          onPressed: () {},
+                          onPressed: onPelajari,
                         ),
                       ],
                     ),

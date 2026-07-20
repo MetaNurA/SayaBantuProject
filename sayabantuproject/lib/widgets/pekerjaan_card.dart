@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import '../models/job_model.dart';
-import '../screens/customer/offer_screen.dart';
 
 class JobCard extends StatelessWidget {
   final JobModel job;
   final VoidCallback? onRefresh;
+  final Function(JobModel) onOpenOffer;
 
   const JobCard({
     super.key,
     required this.job,
     this.onRefresh,
+    required this.onOpenOffer,
     });
 
   @override
@@ -116,20 +117,9 @@ class JobCard extends StatelessWidget {
               const SizedBox(height: 18),
 
               ElevatedButton(
-                onPressed: () async {
-                  final result = await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => OfferScreen(
-                        job: job,
-                      ),
-                    ),
-                  );
-
-                  if (result == true) {
-                    onRefresh?.call();
-                  }
-                },
+                onPressed: () {
+                    onOpenOffer(job);
+                  },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xffF97316),
                   foregroundColor: Colors.white,

@@ -1,14 +1,20 @@
 import 'package:flutter/material.dart';
 
 import '../models/job_model.dart';
-import '../models/offer_model.dart';
 
 import '../widgets/dashboard_header.dart';
 import '../widgets/pekerjaan_card.dart';
 import '../widgets/statistic_card.dart';
 
 class CustomerDashboard extends StatefulWidget {
-  const CustomerDashboard({super.key});
+  final List<JobModel> jobs;
+  final Function(JobModel) onOpenOffer;
+
+  const CustomerDashboard({
+    super.key,
+    required this.jobs,
+    required this.onOpenOffer,
+  });
 
   @override
   State<CustomerDashboard> createState() =>
@@ -18,55 +24,20 @@ class CustomerDashboard extends StatefulWidget {
 class _CustomerDashboardState
     extends State<CustomerDashboard> {
 
-  final List<JobModel> jobs = [
-    JobModel(
-      title: "Service AC Bocor",
-      description: "AC mengeluarkan air sejak kemarin.",
-      price: "Rp150.000",
-      status: "Mencari Mitra",
-      time: "2 jam lalu",
-      offers: [
-        OfferModel(
-          name: "Andi Teknik AC",
-          rating: 4.9,
-          verified: true,
-          jobsCompleted: 120,
-          price: "Rp145.000",
-        ),
-      ],
-    ),
-    JobModel(
-      title: "Perbaikan Kunci Rumah",
-      description: "Kunci utama macet dan sulit diputar.",
-      price: "Rp120.000",
-      status: "Sedang Dikerjakan",
-      time: "Kemarin",
-      offers: [],
-    ),
-    JobModel(
-      title: "Pasang Lampu Teras",
-      description: "Butuh pemasangan lampu taman.",
-      price: "Rp200.000",
-      status: "Selesai",
-      time: "3 hari lalu",
-      offers: [],
-    ),
-  ];
-
   void addJob(JobModel job) {
-    setState(() {
-      jobs.insert(0, job);
-    });
-  }
+  setState(() {
+    widget.jobs.insert(0, job);
+  });
+}
 
   @override
   Widget build(BuildContext context) {
 
-    final int runningJobs = jobs
+    final int runningJobs = widget.jobs
         .where((job) => job.status == "Sedang Dikerjakan")
         .length;
 
-    final int completedJobs = jobs
+    final int completedJobs = widget.jobs
         .where((job) => job.status == "Selesai")
         .length;
 
@@ -87,7 +58,7 @@ class _CustomerDashboardState
             Expanded(
               child: StatisticCard(
                 icon: Icons.assignment,
-                value: jobs.length.toString(),
+                value: widget.jobs.length.toString(),
                 title: "Total Posting",
                 color: Colors.blue,
               ),
@@ -121,16 +92,16 @@ class _CustomerDashboardState
 
                 Expanded(
           child: ListView.separated(
-            itemCount: jobs.length,
+            itemCount: widget.jobs.length,
             separatorBuilder: (_, __) =>
                 const SizedBox(height: 18),
             itemBuilder: (context, index) {
               return JobCard(
-                job: jobs[index],
+                job: widget.jobs[index],
                 onRefresh: () {
-                  setState(() {
-                  });
+                  setState(() {});
                 },
+                onOpenOffer: widget.onOpenOffer,
               );
             },
           ),

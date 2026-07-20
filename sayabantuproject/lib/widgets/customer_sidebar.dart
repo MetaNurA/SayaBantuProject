@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import '../sections/customer_dashboard.dart';
-import '../sections/notification_screen.dart';
-import '../sections/setting_screen.dart';
 import '../models/sidebar_menu.dart';
 
 class CustomerSidebar extends StatefulWidget {

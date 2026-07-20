@@ -15,15 +15,13 @@ class CategorySection extends StatelessWidget {
       child: Column(
         children: [
 
-          Row(
+                    Row(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-
               const Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-
                     Text(
                       "KATEGORI JASA",
                       style: TextStyle(
@@ -33,9 +31,7 @@ class CategorySection extends StatelessWidget {
                         fontSize: 14,
                       ),
                     ),
-
                     SizedBox(height: 10),
-
                     Text(
                       "Semua Kebutuhan\nRumahmu Ada Di Sini",
                       style: TextStyle(
@@ -46,17 +42,6 @@ class CategorySection extends StatelessWidget {
                       ),
                     ),
                   ],
-                ),
-              ),
-
-              TextButton(
-                onPressed: () {},
-                child: const Text(
-                  "Lihat semua kategori →",
-                  style: TextStyle(
-                    color: Color(0xffF97316),
-                    fontWeight: FontWeight.bold,
-                  ),
                 ),
               ),
             ],
@@ -72,7 +57,6 @@ class CategorySection extends StatelessWidget {
             mainAxisSpacing: 20,
             childAspectRatio: 1.7,
             children: const [
-
               CategoryCard(
                 icon: "❄️",
                 title: "AC & Elektronik",
@@ -80,7 +64,6 @@ class CategorySection extends StatelessWidget {
                 bgColor: Color(0xffEDF8FF),
                 borderColor: Color(0xffD7ECFF),
               ),
-
               CategoryCard(
                 icon: "🔌",
                 title: "Plumbing",
@@ -88,7 +71,6 @@ class CategorySection extends StatelessWidget {
                 bgColor: Color(0xffF6F0FF),
                 borderColor: Color(0xffE6D9FF),
               ),
-
               CategoryCard(
                 icon: "💡",
                 title: "Listrik",
@@ -96,7 +78,6 @@ class CategorySection extends StatelessWidget {
                 bgColor: Color(0xffFFF8E7),
                 borderColor: Color(0xffFFE5A6),
               ),
-
               CategoryCard(
                 icon: "🪣",
                 title: "Cat & Tembok",
@@ -104,7 +85,6 @@ class CategorySection extends StatelessWidget {
                 bgColor: Color(0xffFFF5EC),
                 borderColor: Color(0xffFFDDBD),
               ),
-
               CategoryCard(
                 icon: "🔨",
                 title: "Pertukangan",
@@ -112,7 +92,6 @@ class CategorySection extends StatelessWidget {
                 bgColor: Color(0xffF0FFF4),
                 borderColor: Color(0xffCFEFD7),
               ),
-
               CategoryCard(
                 icon: "🧹",
                 title: "Kebersihan",
@@ -120,7 +99,6 @@ class CategorySection extends StatelessWidget {
                 bgColor: Color(0xffFFF0F6),
                 borderColor: Color(0xffFFD6E7),
               ),
-
               CategoryCard(
                 icon: "🌿",
                 title: "Taman & Outdoor",
@@ -128,7 +106,6 @@ class CategorySection extends StatelessWidget {
                 bgColor: Color(0xffF0FFF7),
                 borderColor: Color(0xffCFEFDB),
               ),
-
               CategoryCard(
                 icon: "📦",
                 title: "Pindahan Barang",

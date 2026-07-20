@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../theme/app_colors.dart';
-import '../widgets/custom_button.dart';
+import '../../theme/app_colors.dart';
+import '../../widgets/custom_button.dart';
 import 'login_page.dart';
-import '../sections/customer_dashboard.dart';
-import '../sections/customer_main_screen.dart';
-
+import '../../sections/customer_main_screen.dart';
+import '../../screens/partner/partner_main_dashboard.dart';
 
 class RegisterScreen extends StatefulWidget {
-  const RegisterScreen({super.key});
+  final String? defaultRole;
+
+  const RegisterScreen({
+    super.key,
+    this.defaultRole,
+    });
 
   @override
   State<RegisterScreen> createState() => _RegisterScreenState();
@@ -22,6 +26,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
   bool _obscurePassword = true;
 
   String _selectedRole = "Pelanggan";
+  @override
+    void initState() {
+      super.initState();
+
+      if (widget.defaultRole != null) {
+        _selectedRole = widget.defaultRole!;
+      }
+    }
+  
 
   @override
   void dispose() {
@@ -50,18 +63,28 @@ class _RegisterScreenState extends State<RegisterScreen> {
   await prefs.setString("email", _emailController.text);
   await prefs.setString("role", _selectedRole);
   await prefs.setString("password", _passwordController.text);
+  await prefs.setBool("isLoggedIn", true);
 
   print("Nama      : ${_nameController.text}");
   print("Email     : ${_emailController.text}");
   print("Password  : ${_passwordController.text}");
   print("Role      : $_selectedRole");
 
-  Navigator.pushReplacement(
-    context,
-    MaterialPageRoute(
-      builder: (context) => CustomerMainDashboard(),
-    ),
-  );
+      if (_selectedRole == "Pelanggan") {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (_) => const CustomerMainDashboard(),
+        ),
+      );
+    } else {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (_) => const PartnerMainDashboard(),
+        ),
+      );
+    }
 }
 
   @override
@@ -240,11 +263,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       child: Text("Penyedia Jasa (Mitra)"),
                     ),
                   ],
-                  onChanged: (value) {
-                    setState(() {
-                      _selectedRole = value!;
-                    });
-                  },
+                  onChanged: widget.defaultRole != null
+                    ? null
+                    : (value) {
+                        setState(() {
+                          _selectedRole = value!;
+                        });
+                      },
                 ),
 
                 const SizedBox(height: 30),

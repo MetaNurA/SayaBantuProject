@@ -1,11 +1,11 @@
 import 'offer_model.dart';
 
 class JobModel {
-  final String title;
-  final String description;
-  final String price;
+  String title;
+  String description;
+  String price;
   String status;
-  final String time;
+  String time;
 
   /// Daftar penawaran dari mitra
   List<OfferModel> offers;

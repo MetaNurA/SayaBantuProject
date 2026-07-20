@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
-
-import '../../models/offer_model.dart';
 import '../../widgets/offer_card.dart';
 import '../../models/job_model.dart';
 
 class OfferScreen extends StatelessWidget {
   final JobModel job;
+  final VoidCallback onAccept;
+  final VoidCallback onBack;
+  final VoidCallback onOpenProfile;
 
   const OfferScreen({
     super.key,
     required this.job,
+    required this.onAccept,
+    required this.onBack,
+    required this.onOpenProfile,
     });
 
   @override
@@ -19,6 +23,10 @@ class OfferScreen extends StatelessWidget {
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
 
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: onBack,
+        ),
         elevation: 0,
         backgroundColor: Theme.of(context).cardColor,
         foregroundColor: Colors.black,
@@ -71,6 +79,8 @@ class OfferScreen extends StatelessWidget {
                   return OfferCard(
                     job: job,
                     offer: job.offers[index],
+                    onAccept: onAccept,
+                    onOpenProfile: onOpenProfile,
                   );
                 },
               ),

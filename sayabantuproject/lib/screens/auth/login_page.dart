@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../theme/app_colors.dart';
-import '../widgets/custom_button.dart';
-import '../screens/register_page.dart';
-import '../sections/customer_dashboard.dart';
-import '../sections/customer_main_screen.dart';
+import '../../theme/app_colors.dart';
+import '../../widgets/custom_button.dart';
+import 'register_page.dart';
+import '../../sections/customer_main_screen.dart';
+import '../../screens/partner/partner_main_dashboard.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -31,37 +31,46 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> _handleLogin() async {
-    final prefs = await SharedPreferences.getInstance();
+  final prefs = await SharedPreferences.getInstance();
 
-    final email = prefs.getString("email");
-    final password = prefs.getString("password");
+  final email = prefs.getString("email");
+  final password = prefs.getString("password");
+  final role = prefs.getString("role");
 
-    print("===== DATA LOGIN =====");
-    print("Email tersimpan    : $email");
-    print("Password tersimpan : $password");
-    print("Email input        : ${_emailController.text.trim()}");
-    print("Password input     : ${_passwordController.text.trim()}");
+  print("===== DATA LOGIN =====");
+  print("Role      : $role");
+  print("Email DB  : $email");
+  print("Password  : $password");
 
-    if (_emailController.text.trim() == email &&
-        _passwordController.text.trim() == password) {
+  if (_emailController.text.trim() == email &&
+      _passwordController.text.trim() == password) {
 
-      await prefs.setBool("isLoggedIn", true);
+    await prefs.setBool("isLoggedIn", true);
 
+    if (role == "Pelanggan") {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
           builder: (_) => const CustomerMainDashboard(),
         ),
       );
-
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Email atau Password salah"),
+    } else if (role == "Mitra") {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (_) => const PartnerMainDashboard(),
         ),
       );
     }
+
+  } else {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text("Email atau Password salah"),
+      ),
+    );
   }
+}
   @override
   Widget build(BuildContext context) {
     return Scaffold(

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../screens/login_page.dart';
+import '../screens/auth/login_page.dart';
 
 class SettingScreen extends StatefulWidget {
 

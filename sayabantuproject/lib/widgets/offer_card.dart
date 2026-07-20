@@ -1,16 +1,21 @@
 import 'package:flutter/material.dart';
-import '../models/offer_model.dart';
-import '../screens/customer/partner_profile_screen.dart';
+
 import '../models/job_model.dart';
+import '../models/offer_model.dart';
 
 class OfferCard extends StatelessWidget {
   final JobModel job;
   final OfferModel offer;
 
+  final VoidCallback onAccept;
+  final VoidCallback onOpenProfile;
+
   const OfferCard({
     super.key,
     required this.job,
     required this.offer,
+    required this.onAccept,
+    required this.onOpenProfile,
   });
 
   @override
@@ -27,11 +32,10 @@ class OfferCard extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Foto Mitra
-          CircleAvatar(
+          const CircleAvatar(
             radius: 35,
-            backgroundColor: const Color(0xffFFF3E8),
-            child: const Icon(
+            backgroundColor: Color(0xffFFF3E8),
+            child: Icon(
               Icons.person,
               color: Color(0xffF97316),
               size: 38,
@@ -40,7 +44,6 @@ class OfferCard extends StatelessWidget {
 
           const SizedBox(width: 20),
 
-          // Informasi Mitra
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -54,6 +57,7 @@ class OfferCard extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
+
                     const SizedBox(width: 10),
 
                     if (offer.verified)
@@ -98,8 +102,6 @@ class OfferCard extends StatelessWidget {
                       color: Colors.amber,
                       size: 18,
                     ),
-                    const SizedBox(width: 5),
-                    Text("${offer.rating}"),
 
                     const SizedBox(width: 20),
 
@@ -108,7 +110,9 @@ class OfferCard extends StatelessWidget {
                       color: Colors.grey,
                       size: 18,
                     ),
+
                     const SizedBox(width: 5),
+
                     Text("${offer.jobsCompleted} Job"),
                   ],
                 ),
@@ -129,7 +133,6 @@ class OfferCard extends StatelessWidget {
 
           const SizedBox(width: 20),
 
-          // Tombol
           Column(
             children: [
               ElevatedButton(
@@ -146,17 +149,15 @@ class OfferCard extends StatelessWidget {
                           onPressed: () => Navigator.pop(context),
                           child: const Text("Batal"),
                         ),
+
                         ElevatedButton(
                           onPressed: () {
-                          // Tutup dialog
-                          Navigator.pop(context);
+                            Navigator.pop(context);
 
-                          // Ubah status pekerjaan
-                          job.status = "Sedang Dikerjakan";
+                            job.status = "Sedang Dikerjakan";
 
-                          // Tutup OfferScreen dan kirim hasil ke Dashboard
-                          Navigator.pop(context, true);
-                        },
+                            onAccept();
+                          },
                           child: const Text("Ya"),
                         ),
                       ],
@@ -187,6 +188,7 @@ class OfferCard extends StatelessWidget {
                           onPressed: () => Navigator.pop(context),
                           child: const Text("Batal"),
                         ),
+
                         ElevatedButton(
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.red,
@@ -218,14 +220,7 @@ class OfferCard extends StatelessWidget {
               const SizedBox(height: 12),
 
               TextButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const PartnerProfileScreen(),
-                    ),
-                  );
-                },
+                onPressed: onOpenProfile,
                 child: const Text("Lihat Profil"),
               ),
             ],

@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
-import '../../sections/customer_dashboard.dart';
 
 class PartnerProfileScreen extends StatelessWidget {
-  const PartnerProfileScreen({super.key});
+  final VoidCallback onFinish;
+
+  const PartnerProfileScreen({
+    super.key,
+    required this.onFinish,
+    });
 
   @override
   Widget build(BuildContext context) {
@@ -179,37 +183,24 @@ class PartnerProfileScreen extends StatelessWidget {
 
             const SizedBox(height: 40),
 
-            SizedBox(
-              width: double.infinity,
-              height: 55,
-              child: ElevatedButton.icon(
-                icon: const Icon(Icons.check),
-                label: const Text(
-                  "Pilih Mitra",
-                  style: TextStyle(fontSize: 16),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xffF97316),
-                  foregroundColor: Theme.of(context).cardColor,
-                ),
-                onPressed: () async {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text("Mitra berhasil dipilih."),
-                      duration: Duration(seconds: 2),
-                    ),
-                  );
-
-                  Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => CustomerDashboard(),
-                    ),
-                    (route) => false,
-                  );
-                },
+           SizedBox(
+            width: double.infinity,
+            height: 55,
+            child: ElevatedButton.icon(
+              icon: const Icon(Icons.check),
+              label: const Text(
+                "Selesai",
+                style: TextStyle(fontSize: 16),
               ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xffF97316),
+                foregroundColor: Colors.white,
+              ),
+              onPressed: () {
+                onFinish();
+              },
             ),
+          ),
           ],
         ),
       ),

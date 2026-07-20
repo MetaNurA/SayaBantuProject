@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../models/notification_model.dart';
-import '../models/sidebar_menu.dart';
-
-import '../widgets/customer_sidebar.dart';
 import '../widgets/page_header.dart';
 import '../widgets/notification_card.dart';
 
