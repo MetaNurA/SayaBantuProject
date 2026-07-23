@@ -4,4 +4,6 @@ enum PartnerSidebarMenu {
   riwayatPenghasilan,
   profil,
   pengaturan,
+
+  offerJob, 
 }

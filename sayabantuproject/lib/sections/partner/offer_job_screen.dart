@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import '../../models/partner_job_model.dart';
+import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
+import '../../data/dummy_offers.dart';
+import '../../models/active_offer_model.dart';
+import '../../data/dummy_jobs.dart';
 
 class OfferJobScreen extends StatefulWidget {
   final PartnerJobModel job;
@@ -148,8 +152,15 @@ class _OfferJobScreenState extends State<OfferJobScreen> {
             TextField(
               controller: _priceController,
               keyboardType: TextInputType.number,
+              inputFormatters: [
+                CurrencyInputFormatter(
+                  leadingSymbol: "Rp ",
+                  thousandSeparator: ThousandSeparator.Period,
+                  mantissaLength: 0,
+                ),
+              ],
               decoration: InputDecoration(
-                hintText: "Contoh : Rp145.000",
+                hintText: "Rp 0",
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(14),
                 ),
@@ -195,10 +206,8 @@ class _OfferJobScreenState extends State<OfferJobScreen> {
                   foregroundColor: Colors.white,
                 ),
                 onPressed: () {
-
                   if (_priceController.text.isEmpty ||
                       _messageController.text.isEmpty) {
-
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
                         content: Text(
@@ -206,9 +215,18 @@ class _OfferJobScreenState extends State<OfferJobScreen> {
                         ),
                       ),
                     );
-
                     return;
                   }
+
+                  // Simpan penawaran ke dummy_offers
+                  dummyOffers.add(
+                    ActiveOfferModel(
+                      job: widget.job,
+                      price: _priceController.text,
+                      message: _messageController.text,
+                    ),
+                  );
+                  dummyJobs.remove(widget.job);
 
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
@@ -217,8 +235,6 @@ class _OfferJobScreenState extends State<OfferJobScreen> {
                       ),
                     ),
                   );
-
-                  Navigator.pop(context);
                 },
               ),
             ),

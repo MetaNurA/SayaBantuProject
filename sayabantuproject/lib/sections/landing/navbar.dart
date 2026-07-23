@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import '../theme/app_colors.dart';
-import '../widgets/custom_button.dart';
-import '../screens/auth/login_page.dart';
-import '../screens/auth/register_page.dart';
+import '../../theme/app_colors.dart';
+import '../../widgets/custom_button.dart';
+import '../../screens/auth/login_page.dart';
+import '../../screens/auth/register_page.dart';
 
 
 class CustomNavbar extends StatelessWidget {

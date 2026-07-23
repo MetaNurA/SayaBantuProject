@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 
-import '../../sections/category_section.dart';
-import '../../sections/footer_section.dart';
-import '../../sections/hero_section.dart';
-import '../../sections/how_it_works_section.dart';
-import '../../sections/navbar.dart';
-import '../../sections/partner_cta_section.dart';
-import '../../sections/stats_section.dart';
-import '../../sections/testimonial_section.dart';
-import '../../sections/why_section.dart';
+import '../../sections/landing/category_section.dart';
+import '../../sections/landing/footer_section.dart';
+import '../../sections/landing/hero_section.dart';
+import '../../sections/landing/how_it_works_section.dart';
+import '../../sections/landing/navbar.dart';
+import '../../sections/landing/partner_cta_section.dart';
+import '../../sections/landing/stats_section.dart';
+import '../../sections/landing/testimonial_section.dart';
+import '../../sections/landing/why_section.dart';
 
 class LandingPage extends StatefulWidget {
   const LandingPage({super.key});
@@ -19,6 +19,8 @@ class LandingPage extends StatefulWidget {
 
 class _LandingPageState extends State<LandingPage> {
   final ScrollController scrollController = ScrollController();
+
+  String searchKeyword = "";
 
   final GlobalKey layananKey = GlobalKey();
   final GlobalKey caraKerjaKey = GlobalKey();

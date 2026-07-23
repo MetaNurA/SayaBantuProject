@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:sayabantu_project/screens/auth/register_page.dart';
 
 import 'benefit_card.dart';
-import '../widgets/custom_button.dart';
+import '../../widgets/custom_button.dart';
 
 
 class PartnerCTASection extends StatelessWidget {
@@ -103,7 +104,16 @@ class PartnerCTASection extends StatelessWidget {
                         width: 220,
                         height: 60,
                         backgroundColor: const Color(0xffF97316),
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                             MaterialPageRoute(
+                              builder: (_) => const RegisterScreen(
+                                defaultRole: "Mitra",
+                              ),
+                              ),
+                             );
+                        },
                       ),
                         const SizedBox(width: 18),
 

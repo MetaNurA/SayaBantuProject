@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
 
 import '../../models/job_model.dart';
 
@@ -161,12 +162,18 @@ class _PostingJasaDialogState extends State<PostingJasaDialog> {
 
               const Text("Budget"),
               const SizedBox(height: 8),
-
               TextField(
                 controller: _budgetController,
                 keyboardType: TextInputType.number,
+                inputFormatters: [
+                  CurrencyInputFormatter(
+                    leadingSymbol: "Rp ",
+                    thousandSeparator: ThousandSeparator.Period,
+                    mantissaLength: 0,
+                  ),
+                ],
                 decoration: const InputDecoration(
-                  prefixText: "Rp ",
+                  hintText: "Rp 0",
                   border: OutlineInputBorder(),
                 ),
               ),

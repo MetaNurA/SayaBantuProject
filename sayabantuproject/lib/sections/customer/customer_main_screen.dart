@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 
-import '../../models/sidebar_menu.dart';
-import '../../widgets/customer_sidebar.dart';
+import '../../../models/sidebar_menu.dart';
+import '../../../widgets/customer_sidebar.dart';
 
-import '../models/job_model.dart';
-import '../models/offer_model.dart';
+import '../../models/job_model.dart';
+import '../../models/offer_model.dart';
 
-import '../screens/customer/offer_screen.dart';
-import '../screens/customer/partner_profile_screen.dart';
+import '../../screens/customer/offer_screen.dart';
+import '../../screens/customer/partner_profile_screen.dart';
 
-import '../../sections/customer_dashboard.dart';
-import '../../sections/notification_screen.dart';
-import '../../sections/setting_screen.dart';
+import 'customer_dashboard.dart';
+import 'notification_screen.dart';
+import 'setting_screen.dart';
 
 class CustomerMainDashboard extends StatefulWidget {
   const CustomerMainDashboard({super.key});

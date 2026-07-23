@@ -3,7 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../theme/app_colors.dart';
 import '../../widgets/custom_button.dart';
 import 'login_page.dart';
-import '../../sections/customer_main_screen.dart';
+import '../../sections/customer/customer_main_screen.dart';
 import '../../screens/partner/partner_main_dashboard.dart';
 
 class RegisterScreen extends StatefulWidget {

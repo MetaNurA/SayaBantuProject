@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-import '../models/job_model.dart';
+import '../../models/job_model.dart';
 
-import '../widgets/dashboard_header.dart';
-import '../widgets/pekerjaan_card.dart';
-import '../widgets/statistic_card.dart';
+import '../../widgets/dashboard_header.dart';
+import '../../widgets/pekerjaan_card.dart';
+import '../../widgets/statistic_card.dart';
 
 class CustomerDashboard extends StatefulWidget {
   final List<JobModel> jobs;
