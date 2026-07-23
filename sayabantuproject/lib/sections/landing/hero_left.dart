@@ -1,14 +1,30 @@
 import 'package:flutter/material.dart';
 
-class HeroLeft extends StatelessWidget {
+class HeroLeft extends StatefulWidget {
   final VoidCallback onCariJasa;
   final VoidCallback onJadiMitra;
+  final Function(String) onSearch;
 
   const HeroLeft({
     super.key,
     required this.onCariJasa,
     required this.onJadiMitra,
+    required this.onSearch,
   });
+
+@override
+  State<HeroLeft> createState() => _HeroLeftState();
+}
+
+class _HeroLeftState extends State<HeroLeft> {
+  final TextEditingController searchController =
+      TextEditingController();
+
+  @override
+  void dispose() {
+    searchController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -113,18 +129,23 @@ class HeroLeft extends StatelessWidget {
 
               const SizedBox(width: 10),
 
-              const Expanded(
-                child: Text(
-                  "Mau jasa apa hari ini?",
-                  style: TextStyle(
-                    color: Colors.grey,
-                    fontSize: 13,
+              Expanded(
+                child: TextField(
+                  controller: searchController,
+                  decoration: const InputDecoration(
+                    hintText: "Mau jasa apa hari ini?",
+                    border: InputBorder.none,
+                    isCollapsed: true,
                   ),
                 ),
               ),
 
               InkWell(
-                onTap: onCariJasa,
+                onTap: () {
+                  widget.onSearch(
+                    searchController.text.trim(),
+                  );
+                },
                 borderRadius: const BorderRadius.only(
                   topRight: Radius.circular(14),
                   bottomRight: Radius.circular(14),
@@ -161,7 +182,7 @@ class HeroLeft extends StatelessWidget {
         Row(
           children: [
             ElevatedButton(
-              onPressed: onCariJasa,
+              onPressed: widget.onCariJasa,
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFFFF7A00),
                 padding: const EdgeInsets.symmetric(
@@ -181,7 +202,7 @@ class HeroLeft extends StatelessWidget {
             const SizedBox(width: 16),
 
             OutlinedButton(
-              onPressed: onJadiMitra,
+              onPressed: widget.onJadiMitra,
               style: OutlinedButton.styleFrom(
                 side: const BorderSide(
                   color: Colors.white,

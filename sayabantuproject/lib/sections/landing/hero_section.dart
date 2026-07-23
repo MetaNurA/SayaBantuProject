@@ -6,12 +6,14 @@ import 'hero_right.dart';
 class HeroSection extends StatelessWidget {
   final VoidCallback onCariJasa;
   final VoidCallback onJadiMitra;
+  final Function(String) onSearch;
 
   const HeroSection({
     super.key,
     required this.onCariJasa,
     required this.onJadiMitra,
-    });
+    required this.onSearch,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +21,7 @@ class HeroSection extends StatelessWidget {
 
     return Container(
       width: double.infinity,
-      height: screenHeight, //ukuran layar pada landing page
+      height: screenHeight,
       decoration: const BoxDecoration(
         image: DecorationImage(
           image: AssetImage(
@@ -48,16 +50,17 @@ class HeroSection extends StatelessWidget {
                     child: HeroLeft(
                       onCariJasa: onCariJasa,
                       onJadiMitra: onJadiMitra,
+                      onSearch: onSearch,
                     ),
                   ),
 
                   const SizedBox(width: 30),
 
-                  Expanded(
+                  const Expanded(
                     flex: 4,
                     child: Align(
                       alignment: Alignment.centerRight,
-                      child: const HeroRight(),
+                      child: HeroRight(),
                     ),
                   ),
                 ],

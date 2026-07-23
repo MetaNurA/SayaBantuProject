@@ -6,8 +6,8 @@ import '../../../widgets/customer_sidebar.dart';
 import '../../models/job_model.dart';
 import '../../models/offer_model.dart';
 
-import '../../screens/customer/offer_screen.dart';
-import '../../screens/customer/partner_profile_screen.dart';
+import '../../screens/Screens_Customer/offer_screen.dart';
+import '../../screens/Screens_Customer/partner_profile_screen.dart';
 
 import 'customer_dashboard.dart';
 import 'notification_screen.dart';

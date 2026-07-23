@@ -9,6 +9,9 @@ import '../../sections/landing/partner_cta_section.dart';
 import '../../sections/landing/stats_section.dart';
 import '../../sections/landing/testimonial_section.dart';
 import '../../sections/landing/why_section.dart';
+import '../../data/dummy_jobs.dart';
+import '../../models/partner_job_model.dart';
+import '../../sections/landing/search_result_section.dart';
 
 class LandingPage extends StatefulWidget {
   const LandingPage({super.key});
@@ -22,10 +25,13 @@ class _LandingPageState extends State<LandingPage> {
 
   String searchKeyword = "";
 
+  List<PartnerJobModel> filteredJobs = [];
+
   final GlobalKey layananKey = GlobalKey();
   final GlobalKey caraKerjaKey = GlobalKey();
   final GlobalKey mitraKey = GlobalKey();
   final GlobalKey tentangKey = GlobalKey();
+  final GlobalKey searchResultKey = GlobalKey();
 
   void scrollTo(GlobalKey key) {
     final context = key.currentContext;
@@ -38,6 +44,37 @@ class _LandingPageState extends State<LandingPage> {
       );
     }
   }
+  @override
+    void initState() {
+      super.initState();
+      filteredJobs = List.from(dummyJobs);
+    }
+
+    void searchJob(String keyword) {
+      setState(() {
+        searchKeyword = keyword;
+
+        if (keyword.isEmpty) {
+          filteredJobs = List.from(dummyJobs);
+        } else {
+          filteredJobs = dummyJobs.where((job) {
+            return job.title.toLowerCase().contains(keyword.toLowerCase()) ||
+                  job.description.toLowerCase().contains(keyword.toLowerCase()) ||
+                  job.category.toLowerCase().contains(keyword.toLowerCase());
+          }).toList();
+        }
+      });
+
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (searchResultKey.currentContext != null) {
+          Scrollable.ensureVisible(
+            searchResultKey.currentContext!,
+            duration: const Duration(milliseconds: 700),
+            curve: Curves.easeInOut,
+          );
+        }
+      });
+    }
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +94,17 @@ class _LandingPageState extends State<LandingPage> {
             HeroSection(
               onCariJasa: () => scrollTo(layananKey),
               onJadiMitra: () => scrollTo(mitraKey),
+              onSearch: searchJob,
             ),
+
+            if (searchKeyword.isNotEmpty)
+              Container(
+                key: searchResultKey,
+                child: SearchResultSection(
+                  jobs: filteredJobs,
+                  keyword: searchKeyword,
+                ),
+              ),
 
             Container(
               key: layananKey,

@@ -154,8 +154,6 @@ class OfferCard extends StatelessWidget {
                           onPressed: () {
                             Navigator.pop(context);
 
-                            job.status = "Sedang Dikerjakan";
-
                             onAccept();
                           },
                           child: const Text("Ya"),

@@ -7,13 +7,14 @@ import '../../widgets/partner_sidebar.dart';
 
 import '../../sections/partner/partner_dashboard.dart';
 import '../../sections/partner/active_offer_screen.dart';
-import '../../sections/partner/income_screen.dart';
+import 'income_screen.dart';
 import '../../sections/partner/partner_profile_section.dart';
 import '../../sections/partner/partner_setting_screen.dart';
 import '../../sections/partner/offer_job_screen.dart';
+import '../Screens_Partner/income_screen.dart';
 
 class PartnerMainDashboard extends StatefulWidget {
-  const PartnerMainDashboard({super.key});
+  const PartnerMainDashboard({super.key,});
 
   @override
   State<PartnerMainDashboard> createState() =>
@@ -43,8 +44,17 @@ class _PartnerMainDashboardState extends State<PartnerMainDashboard> {
       case PartnerSidebarMenu.offerJob:
         return OfferJobScreen(
           job: selectedJob!,
+          onSubmit: () {
+            setState(() {
+              selectedMenu = PartnerSidebarMenu.penawaranAktif;
+            });
+          },
+          onBack: () {
+            setState(() {
+              selectedMenu = PartnerSidebarMenu.cariPekerjaan;
+            });
+          },
         );
-
       case PartnerSidebarMenu.penawaranAktif:
         return const ActiveOfferScreen();
 

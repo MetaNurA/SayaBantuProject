@@ -98,9 +98,11 @@ class _CustomerDashboardState
             itemBuilder: (context, index) {
               return JobCard(
                 job: widget.jobs[index],
+
                 onRefresh: () {
                   setState(() {});
                 },
+
                 onOpenOffer: widget.onOpenOffer,
               );
             },

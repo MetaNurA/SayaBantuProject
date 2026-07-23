@@ -6,6 +6,8 @@ class JobModel {
   String price;
   String status;
   String time;
+  String? partnerName;
+  String? completedDate;
 
   /// Daftar penawaran dari mitra
   List<OfferModel> offers;
@@ -17,6 +19,8 @@ class JobModel {
     required this.status,
     required this.time,
     required this.offers,
+    this.partnerName,
+    this.completedDate,
   });
 
   /// Jumlah penawar dihitung otomatis

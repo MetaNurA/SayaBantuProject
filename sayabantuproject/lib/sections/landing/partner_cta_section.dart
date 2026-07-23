@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sayabantu_project/screens/auth/register_page.dart';
+import 'package:sayabantu_project/screens/Screens_auth/register_page.dart';
 
 import 'benefit_card.dart';
 import '../../widgets/custom_button.dart';

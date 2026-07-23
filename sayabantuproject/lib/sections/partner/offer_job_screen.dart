@@ -7,10 +7,14 @@ import '../../data/dummy_jobs.dart';
 
 class OfferJobScreen extends StatefulWidget {
   final PartnerJobModel job;
+  final VoidCallback onSubmit;
+  final VoidCallback onBack;
 
   const OfferJobScreen({
     super.key,
     required this.job,
+    required this.onSubmit,
+    required this.onBack,
   });
 
   @override
@@ -37,6 +41,10 @@ class _OfferJobScreenState extends State<OfferJobScreen> {
       backgroundColor: const Color(0xffF8FAFC),
 
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: widget.onBack,
+        ),
         title: const Text("Ambil & Nego"),
         centerTitle: true,
         backgroundColor: Colors.white,
@@ -235,6 +243,7 @@ class _OfferJobScreenState extends State<OfferJobScreen> {
                       ),
                     ),
                   );
+                   widget.onSubmit();
                 },
               ),
             ),

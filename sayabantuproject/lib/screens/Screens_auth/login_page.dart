@@ -1,83 +1,60 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 import '../../theme/app_colors.dart';
 import '../../widgets/custom_button.dart';
-import 'login_page.dart';
-import '../../sections/customer/customer_main_screen.dart';
-import '../../screens/partner/partner_main_dashboard.dart';
+import 'register_page.dart';
+import '../../sections/customer/customer_main_dashboard.dart';
+import '../Screens_Partner/partner_main_dashboard.dart';
 
-class RegisterScreen extends StatefulWidget {
-  final String? defaultRole;
-
-  const RegisterScreen({
-    super.key,
-    this.defaultRole,
-    });
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
 
   @override
-  State<RegisterScreen> createState() => _RegisterScreenState();
+  State<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _RegisterScreenState extends State<RegisterScreen> {
-  final _nameController = TextEditingController();
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
+class _LoginScreenState extends State<LoginScreen> {
+  final TextEditingController _emailController =
+      TextEditingController();
+
+  final TextEditingController _passwordController =
+      TextEditingController();
 
   bool _obscurePassword = true;
 
-  String _selectedRole = "Pelanggan";
-  @override
-    void initState() {
-      super.initState();
-
-      if (widget.defaultRole != null) {
-        _selectedRole = widget.defaultRole!;
-      }
-    }
-  
-
   @override
   void dispose() {
-    _nameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
   }
 
-  Future<void> _register() async {
-  if (_nameController.text.isEmpty ||
-      _emailController.text.isEmpty ||
-      _passwordController.text.isEmpty) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text("Semua data wajib diisi."),
-      ),
-    );
-    return;
-  }
-
-  // Simpan data user
+  Future<void> _handleLogin() async {
   final prefs = await SharedPreferences.getInstance();
 
-  await prefs.setString("name", _nameController.text);
-  await prefs.setString("email", _emailController.text);
-  await prefs.setString("role", _selectedRole);
-  await prefs.setString("password", _passwordController.text);
-  await prefs.setBool("isLoggedIn", true);
+  final email = prefs.getString("email");
+  final password = prefs.getString("password");
+  final role = prefs.getString("role");
 
-  print("Nama      : ${_nameController.text}");
-  print("Email     : ${_emailController.text}");
-  print("Password  : ${_passwordController.text}");
-  print("Role      : $_selectedRole");
+  print("===== DATA LOGIN =====");
+  print("Role      : $role");
+  print("Email DB  : $email");
+  print("Password  : $password");
 
-      if (_selectedRole == "Pelanggan") {
+  if (_emailController.text.trim() == email &&
+      _passwordController.text.trim() == password) {
+
+    await prefs.setBool("isLoggedIn", true);
+
+    if (role == "Pelanggan") {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
           builder: (_) => const CustomerMainDashboard(),
         ),
       );
-    } else {
+    } else if (role == "Mitra") {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
@@ -85,8 +62,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
         ),
       );
     }
-}
 
+  } else {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text("Email atau Password salah"),
+      ),
+    );
+  }
+}
+Widget tes() {
+  return const TextField();
+}
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -94,7 +81,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       body: Center(
         child: SingleChildScrollView(
           child: Container(
-            width: 460,
+            width: 450,
             padding: const EdgeInsets.all(35),
             decoration: BoxDecoration(
               color: Theme.of(context).cardColor,
@@ -104,14 +91,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   color: Colors.black.withValues(alpha: 0.08),
                   blurRadius: 25,
                   offset: const Offset(0, 12),
-                )
+                ),
               ],
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-
-                /// Logo
                 Center(
                   child: Column(
                     children: [
@@ -122,30 +107,25 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           color: AppColors.primary,
                           borderRadius: BorderRadius.circular(18),
                         ),
-                        child: Icon(
-                          Icons.person_add_alt_1,
-                          color: Theme.of(context).cardColor,
-                          size: 36,
-                        ),
+                        child: const Icon(
+                            Icons.lock_open_rounded,
+                            color: Color(0xFFF97316),
+                            size: 38,
+                          ),
                       ),
-
                       const SizedBox(height: 20),
-
                       const Text(
-                        "Daftar Akun",
+                        "Masuk",
                         style: TextStyle(
                           fontSize: 30,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-
                       const SizedBox(height: 8),
-
                       const Text(
-                        "Buat akun SayaBantu sekarang",
+                        "Selamat datang kembali di SayaBantu",
                         style: TextStyle(
                           color: Colors.grey,
-                          fontSize: 15,
                         ),
                       ),
                     ],
@@ -154,30 +134,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                 const SizedBox(height: 35),
 
-                /// Nama
-                const Text(
-                  "Nama Lengkap",
-                  style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-
-                const SizedBox(height: 8),
-
-                TextField(
-                  controller: _nameController,
-                  decoration: InputDecoration(
-                    hintText: "Masukkan nama lengkap",
-                    prefixIcon: const Icon(Icons.person_outline),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(14),
-                    ),
-                  ),
-                ),
-
-                const SizedBox(height: 20),
-
-                /// Email
                 const Text(
                   "Email",
                   style: TextStyle(
@@ -200,7 +156,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                 const SizedBox(height: 20),
 
-                /// Password
                 const Text(
                   "Password",
                   style: TextStyle(
@@ -234,54 +189,28 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                 ),
 
-                const SizedBox(height: 20),
-
-                /// Role
-                const Text(
-                  "Daftar Sebagai",
-                  style: TextStyle(
-                    fontWeight: FontWeight.w600,
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: TextButton(
+                    onPressed: () {},
+                    child: Text(
+                      "Lupa Password?",
+                      style: TextStyle(
+                        color: AppColors.primary,
+                      ),
+                    ),
                   ),
                 ),
 
-                const SizedBox(height: 8),
+                const SizedBox(height: 15),
 
-                DropdownButtonFormField<String>(
-                  value: _selectedRole,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(14),
-                    ),
-                  ),
-                  items: const [
-                    DropdownMenuItem(
-                      value: "Pelanggan",
-                      child: Text("Pencari Jasa (Pelanggan)"),
-                    ),
-                    DropdownMenuItem(
-                      value: "Mitra",
-                      child: Text("Penyedia Jasa (Mitra)"),
-                    ),
-                  ],
-                  onChanged: widget.defaultRole != null
-                    ? null
-                    : (value) {
-                        setState(() {
-                          _selectedRole = value!;
-                        });
-                      },
-                ),
-
-                const SizedBox(height: 30),
-
-                /// Button Register
                 Center(
                   child: CustomButton(
-                    text: "Daftar Sekarang",
-                    width: 390,
+                    text: "Masuk",
+                    width: 380,
                     height: 56,
                     backgroundColor: AppColors.primary,
-                    onPressed: _register,
+                    onPressed: _handleLogin,
                   ),
                 ),
 
@@ -290,18 +219,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text("Sudah punya akun?"),
+                    const Text("Belum punya akun?"),
                     TextButton(
                       onPressed: () {
                         Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                            builder: (_) => const LoginScreen(),
+                            builder: (_) => const RegisterScreen(),
                           ),
                         );
                       },
                       child: Text(
-                        "Masuk",
+                        "Daftar",
                         style: TextStyle(
                           color: AppColors.primary,
                           fontWeight: FontWeight.bold,

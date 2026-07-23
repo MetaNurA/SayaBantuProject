@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../screens/customer/posting_jasa_dialog.dart';
+import '../screens/Screens_Customer/posting_jasa_dialog.dart';
 import '../models/job_model.dart';
 
 class DashboardHeader extends StatelessWidget {

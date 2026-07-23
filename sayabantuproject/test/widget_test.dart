@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sayabantu_project/screens/landing/landing_page.dart';
+import 'package:sayabantu_project/screens/Screens_Landing/landing_page.dart';
 import 'package:sayabantu_project/theme/app_theme.dart';
 
 void main() {
