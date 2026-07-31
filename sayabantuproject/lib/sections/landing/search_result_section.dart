@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import '../../models/partner_job_model.dart';
+import '../../models/job_model.dart';
 
 class SearchResultSection extends StatelessWidget {
-  final List<PartnerJobModel> jobs;
+  final List<JobModel> jobs;
   final String keyword;
 
   const SearchResultSection({

@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
+import '../../models/offer_model.dart';
+
 
 class PartnerProfileScreen extends StatelessWidget {
   final VoidCallback onFinish;
+  final OfferModel offer;
 
   const PartnerProfileScreen({
     super.key,
     required this.onFinish,
+    required this.offer,
     });
 
   @override
@@ -39,8 +43,8 @@ class PartnerProfileScreen extends StatelessWidget {
 
             const SizedBox(height: 20),
 
-            const Text(
-              "Pak Budi Santoso",
+            Text(
+              offer.name,
               style: TextStyle(
                 fontSize: 28,
                 fontWeight: FontWeight.bold,
@@ -63,6 +67,7 @@ class PartnerProfileScreen extends StatelessWidget {
 
             const SizedBox(height: 10),
 
+            if (offer.verified)
             Container(
               padding: const EdgeInsets.symmetric(
                 horizontal: 14,
@@ -96,11 +101,11 @@ class PartnerProfileScreen extends StatelessWidget {
 
             // Statistik
             Row(
-              children: const [
+              children: [
 
                 Expanded(
                   child: _Statistic(
-                    value: "248",
+                    value: offer.jobsCompleted.toString(),
                     title: "Job Selesai",
                   ),
                 ),

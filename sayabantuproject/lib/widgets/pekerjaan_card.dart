@@ -3,13 +3,13 @@ import '../models/job_model.dart';
 
 class JobCard extends StatelessWidget {
   final JobModel job;
-  final VoidCallback? onRefresh;
+  final Function(JobModel)? onFinish;
   final Function(JobModel) onOpenOffer;
 
   const JobCard({
     super.key,
     required this.job,
-    this.onRefresh,
+    this.onFinish,
     required this.onOpenOffer,
     });
 
@@ -35,13 +35,18 @@ class JobCard extends StatelessWidget {
               color: const Color(0xffF3F4F6),
               borderRadius: BorderRadius.circular(14),
             ),
-            child: const Icon(
-              Icons.handyman,
-              size: 42,
-              color: Color(0xffF97316),
-            ),
+            clipBehavior: Clip.antiAlias,
+            child: job.imageBytes != null
+                ? Image.memory(
+                    job.imageBytes!,
+                    fit: BoxFit.cover,
+                  )
+                : const Icon(
+                    Icons.handyman,
+                    size: 42,
+                    color: Color(0xffF97316),
+                  ),
           ),
-
           const SizedBox(width: 20),
 
           // Informasi
@@ -68,24 +73,79 @@ class JobCard extends StatelessWidget {
                   ),
                 ),
 
-                const SizedBox(height: 18),
+                if (job.partnerName != null) ...[
+                    const SizedBox(height: 12),
 
-                Row(
-                  children: [
-                    Text(
-                      job.price,
-                      style: const TextStyle(
-                        color: Colors.grey,
-                        fontSize: 14,
-                      ),
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.person,
+                          size: 18,
+                          color: Colors.green,
+                        ),
+                        const SizedBox(width: 6),
+                        Expanded(
+                          child: Text(
+                            "Mitra: ${job.partnerName}",
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.green,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(width: 24),
-                    _info(Icons.people_alt_outlined, "${job.offerCount} Penawar"),
-                    const SizedBox(width: 24),
-                    _info(Icons.access_time, job.time),
+
+                    const SizedBox(height: 6),
+
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.payments,
+                          size: 18,
+                          color: Colors.orange,
+                        ),
+                        const SizedBox(width: 6),
+                        Text(
+                          "Harga Deal: ${job.acceptedPrice}",
+                          style: const TextStyle(
+                            color: Colors.orange,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
                   ],
-                )
-              ],
+
+                  const SizedBox(height: 18),
+
+                  Row(
+                    children: [
+                      if (job.status == "Mencari Mitra") ...[
+                        Text(
+                          job.price,
+                          style: const TextStyle(
+                            color: Colors.grey,
+                            fontSize: 14,
+                          ),
+                        ),
+                        const SizedBox(width: 24),
+
+                        _info(
+                          Icons.people_alt_outlined,
+                          "${job.offerCount} Penawar",
+                        ),
+
+                        const SizedBox(width: 24),
+                      ],
+
+                      _info(
+                        Icons.access_time,
+                        job.time,
+                      ),
+                    ],
+                  ),
+              ]
             ),
           ),
 
@@ -101,14 +161,22 @@ class JobCard extends StatelessWidget {
                   vertical: 8,
                 ),
                 decoration: BoxDecoration(
-                  color: Colors.orange.shade100,
+                  color: job.status == "Selesai"
+                    ? Colors.green.shade100
+                    : job.status == "Sedang Dikerjakan"
+                        ? Colors.blue.shade100
+                        : Colors.orange.shade100,
                   borderRadius: BorderRadius.circular(30),
                 ),
                 child: 
                 Text(
                   job.status,
                   style: TextStyle(
-                    color: Colors.orange,
+                    color: job.status == "Selesai"
+                      ? Colors.green
+                      : job.status == "Sedang Dikerjakan"
+                          ? Colors.blue
+                          : Colors.orange,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -116,12 +184,54 @@ class JobCard extends StatelessWidget {
 
               const SizedBox(height: 18),
 
-              ElevatedButton(
-                onPressed: () {
+              if (job.status == "Mencari Mitra")
+                ElevatedButton(
+                  onPressed: () {
                     onOpenOffer(job);
                   },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xffF97316),
+                    foregroundColor: Colors.white,
+                    elevation: 0,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 14,
+                    ),
+                  ),
+                  child: const Text("Lihat Penawaran"),
+                )
+             else if (job.status == "Sedang Dikerjakan")
+                ElevatedButton(
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (_) => AlertDialog(
+                      title: const Text("Konfirmasi"),
+                      content: const Text(
+                        "Apakah pekerjaan ini benar-benar telah selesai?",
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(context),
+                          child: const Text("Batal"),
+                        ),
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.green,
+                            foregroundColor: Colors.white,
+                          ),
+                          onPressed: () {
+                            Navigator.pop(context);
+                            onFinish?.call(job);
+                          },
+                          child: const Text("Ya"),
+                        ),
+                      ],
+                    ),
+                  );
+                },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xffF97316),
+                  backgroundColor: Colors.green,
                   foregroundColor: Colors.white,
                   elevation: 0,
                   padding: const EdgeInsets.symmetric(
@@ -129,7 +239,7 @@ class JobCard extends StatelessWidget {
                     vertical: 14,
                   ),
                 ),
-                child: const Text("Lihat Penawaran"),
+                child: const Text("Selesaikan"),
               ),
             ],
           ),

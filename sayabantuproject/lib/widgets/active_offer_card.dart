@@ -3,15 +3,55 @@ import '../models/active_offer_model.dart';
 
 class ActiveOfferCard extends StatelessWidget {
   final ActiveOfferModel offer;
+  final VoidCallback? onFinishJob;
 
   const ActiveOfferCard({
     super.key,
     required this.offer,
+    this.onFinishJob,
   });
+
+  Color _statusColor(String status) {
+    switch (status) {
+      case "Menunggu Respon":
+        return Colors.orange;
+
+      case "Sedang Dikerjakan":
+        return Colors.blue;
+
+      case "Selesai":
+        return Colors.teal;
+
+      case "Ditolak":
+        return Colors.red;
+
+      default:
+        return Colors.grey;
+    }
+  }
+
+  IconData _statusIcon(String status) {
+    switch (status) {
+      case "Menunggu Respon":
+        return Icons.access_time;
+
+      case "Sedang Dikerjakan":
+        return Icons.build;
+
+      case "Selesai":
+        return Icons.task_alt;
+
+      case "Ditolak":
+        return Icons.cancel;
+
+      default:
+        return Icons.info;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    final bool accepted = offer.accepted;
+    final String status = offer.status;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 22),
@@ -20,10 +60,8 @@ class ActiveOfferCard extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: accepted
-              ? const Color(0xff16A34A)
-              : const Color(0xffE5E7EB),
-          width: accepted ? 2 : 1,
+          color: _statusColor(status),
+          width: 1.5,
         ),
       ),
       child: Column(
@@ -66,33 +104,6 @@ class ActiveOfferCard extends StatelessWidget {
                 ),
               ),
 
-              const SizedBox(width: 35),
-
-              const Icon(
-                Icons.groups_outlined,
-                color: Colors.blue,
-              ),
-
-              const SizedBox(width: 6),
-
-              Text(
-                "Posisi #${offer.queue}",
-                style: const TextStyle(
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-
-              if (offer.queue == 1) ...[
-                const SizedBox(width: 10),
-                const Text(
-                  "TERATAS!",
-                  style: TextStyle(
-                    color: Colors.green,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-
               const Spacer(),
 
               Container(
@@ -101,33 +112,24 @@ class ActiveOfferCard extends StatelessWidget {
                   vertical: 9,
                 ),
                 decoration: BoxDecoration(
-                  color: accepted
-                      ? const Color(0xffDCFCE7)
-                      : const Color(0xffFFF7ED),
+                  color: _statusColor(status).withOpacity(0.15),
                   borderRadius: BorderRadius.circular(30),
                 ),
                 child: Row(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     Icon(
-                      accepted
-                          ? Icons.check_circle
-                          : Icons.access_time,
+                      _statusIcon(status),
                       size: 18,
-                      color: accepted
-                          ? Colors.green
-                          : Colors.orange,
+                      color: _statusColor(status),
                     ),
 
                     const SizedBox(width: 6),
 
                     Text(
-                      accepted
-                          ? "Diterima Pelanggan"
-                          : "Menunggu",
+                      status,
                       style: TextStyle(
-                        color: accepted
-                            ? Colors.green
-                            : Colors.orange,
+                        color: _statusColor(status),
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -136,7 +138,29 @@ class ActiveOfferCard extends StatelessWidget {
               ),
             ],
           ),
-        ],
+          if (status == "Sedang Dikerjakan") ...[
+            const SizedBox(height: 20),
+
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: onFinishJob,
+                icon: const Icon(Icons.task_alt),
+                label: const Text("Selesaikan Pekerjaan"),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 14,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+              ),
+            ),
+          ],
+                  ],
       ),
     );
   }

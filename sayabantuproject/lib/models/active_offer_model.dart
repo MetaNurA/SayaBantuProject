@@ -1,18 +1,16 @@
-import 'partner_job_model.dart';
+import 'job_model.dart';
 
 class ActiveOfferModel {
-  final PartnerJobModel job;
+  final JobModel job;
   final String price;
   final String message;
 
-  int queue;
-  bool accepted;
+  String status;
 
   ActiveOfferModel({
     required this.job,
     required this.price,
     required this.message,
-    this.queue = 1,
-    this.accepted = false,
+    this.status = "Menunggu Respon",
   });
 }

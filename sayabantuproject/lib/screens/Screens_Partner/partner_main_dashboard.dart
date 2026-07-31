@@ -1,17 +1,14 @@
 import 'package:flutter/material.dart';
 
 import '../../models/partner_sidebar_menu.dart';
-import '../../models/partner_job_model.dart';
+import '../../models/job_model.dart';
 
 import '../../widgets/partner_sidebar.dart';
 
 import '../../sections/partner/partner_dashboard.dart';
 import '../../sections/partner/active_offer_screen.dart';
-import 'income_screen.dart';
-import '../../sections/partner/partner_profile_section.dart';
 import '../../sections/partner/partner_setting_screen.dart';
 import '../../sections/partner/offer_job_screen.dart';
-import '../Screens_Partner/income_screen.dart';
 
 class PartnerMainDashboard extends StatefulWidget {
   const PartnerMainDashboard({super.key,});
@@ -26,7 +23,7 @@ class _PartnerMainDashboardState extends State<PartnerMainDashboard> {
   PartnerSidebarMenu selectedMenu =
       PartnerSidebarMenu.cariPekerjaan;
 
-  PartnerJobModel? selectedJob;
+  JobModel? selectedJob;
 
   Widget currentPage() {
     switch (selectedMenu) {
@@ -58,14 +55,12 @@ class _PartnerMainDashboardState extends State<PartnerMainDashboard> {
       case PartnerSidebarMenu.penawaranAktif:
         return const ActiveOfferScreen();
 
-      case PartnerSidebarMenu.riwayatPenghasilan:
-        return const IncomeScreen();
-
-      case PartnerSidebarMenu.profil:
-        return const PartnerProfileSection();
-
       case PartnerSidebarMenu.pengaturan:
-        return const PartnerSettingScreen();
+        return PartnerSettingScreen(
+          onProfileUpdate: () {
+            setState(() {});
+          },
+        );
     }
   }
 

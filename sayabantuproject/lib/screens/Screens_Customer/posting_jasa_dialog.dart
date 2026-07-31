@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -19,8 +19,7 @@ class _PostingJasaDialogState extends State<PostingJasaDialog> {
   final _budgetController = TextEditingController();
   final _lokasiController = TextEditingController();
 
-  File? _selectedImage;
-
+  Uint8List? _selectedImage;
   String _kategori = "Service AC";
 
   final List<String> kategoriList = [
@@ -42,18 +41,20 @@ class _PostingJasaDialogState extends State<PostingJasaDialog> {
   }
 
   Future<void> _pickImage() async {
-    final picker = ImagePicker();
+  final picker = ImagePicker();
 
-    final XFile? image = await picker.pickImage(
-      source: ImageSource.gallery,
-    );
+  final XFile? image = await picker.pickImage(
+    source: ImageSource.gallery,
+  );
 
-    if (image != null) {
-      setState(() {
-        _selectedImage = File(image.path);
-      });
-    }
+  if (image != null) {
+    final bytes = await image.readAsBytes();
+
+    setState(() {
+      _selectedImage = bytes;
+    });
   }
+}
 
   void _postingJasa() {
     if (_judulController.text.isEmpty ||
@@ -71,13 +72,16 @@ class _PostingJasaDialogState extends State<PostingJasaDialog> {
 
     final job = JobModel(
       title: _judulController.text,
+      category: _kategori,
       description: _deskripsiController.text,
-      price: "Rp${_budgetController.text}",
+      location: _lokasiController.text,
+      price: _budgetController.text,
       status: "Mencari Mitra",
       time: "Baru saja",
+      bidderCount: 0,
       offers: [],
+      imageBytes: _selectedImage,
     );
-
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text("Posting jasa berhasil dibuat."),
@@ -224,7 +228,7 @@ class _PostingJasaDialogState extends State<PostingJasaDialog> {
                         )
                       : ClipRRect(
                           borderRadius: BorderRadius.circular(14),
-                          child: Image.file(
+                          child: Image.memory(
                             _selectedImage!,
                             fit: BoxFit.cover,
                             width: double.infinity,

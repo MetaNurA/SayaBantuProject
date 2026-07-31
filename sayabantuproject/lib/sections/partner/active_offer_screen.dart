@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../data/dummy_offers.dart';
+import '../../data/job_data.dart';
+import '../../data/active_offer_data.dart';
 import '../../widgets/active_offer_card.dart';
 
 class ActiveOfferScreen extends StatelessWidget {
@@ -8,6 +9,8 @@ class ActiveOfferScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final activeJobs = jobs.where((job) => job.offers.isNotEmpty).toList();
+
     return Container(
       color: const Color(0xffF8FAFC),
       padding: const EdgeInsets.all(35),
@@ -25,20 +28,18 @@ class ActiveOfferScreen extends StatelessWidget {
           const SizedBox(height: 8),
 
           const Text(
-            "Seluruh penawaran yang sedang menunggu respon pelanggan.",
-            style: TextStyle(
-              color: Colors.grey,
-            ),
+            "Seluruh pekerjaan yang sudah diberi penawaran.",
+            style: TextStyle(color: Colors.grey),
           ),
 
           const SizedBox(height: 35),
 
           Expanded(
             child: ListView.builder(
-              itemCount: dummyOffers.length,
+              itemCount: activeOffers.length,
               itemBuilder: (context, index) {
                 return ActiveOfferCard(
-                  offer: dummyOffers[index],
+                  offer: activeOffers[index],
                 );
               },
             ),

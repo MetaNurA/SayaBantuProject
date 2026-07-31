@@ -3,13 +3,15 @@ class OfferModel {
   final int jobsCompleted;
   final String price;
   final bool verified;
+  String status; 
   
 
-  const OfferModel({
+  OfferModel({
     required this.name,
     required this.jobsCompleted,
     required this.price,
     this.verified = true,
+    this.status = "Menunggu Respon",
   });
   
 }

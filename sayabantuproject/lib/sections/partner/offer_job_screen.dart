@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import '../../models/partner_job_model.dart';
+import '../../models/job_model.dart';
 import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
-import '../../data/dummy_offers.dart';
+import '../../models/offer_model.dart';
+import '../../data/active_offer_data.dart';
 import '../../models/active_offer_model.dart';
-import '../../data/dummy_jobs.dart';
 
 class OfferJobScreen extends StatefulWidget {
-  final PartnerJobModel job;
+  final JobModel job;
   final VoidCallback onSubmit;
   final VoidCallback onBack;
 
@@ -225,26 +225,35 @@ class _OfferJobScreenState extends State<OfferJobScreen> {
                     );
                     return;
                   }
-
-                  // Simpan penawaran ke dummy_offers
-                  dummyOffers.add(
-                    ActiveOfferModel(
-                      job: widget.job,
-                      price: _priceController.text,
-                      message: _messageController.text,
-                    ),
-                  );
-                  dummyJobs.remove(widget.job);
-
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text(
-                        "Penawaran berhasil dikirim.",
+                  // Tambahkan penawaran ke pekerjaan yang dipilih
+                    widget.job.offers.add(
+                      OfferModel(
+                        name: "Mitra Demo",
+                        jobsCompleted: 0,
+                        price: _priceController.text,
+                        verified: true,
+                        status: "Menunggu Respon",
                       ),
-                    ),
-                  );
-                   widget.onSubmit();
-                },
+                    );
+                    activeOffers.add(
+                      ActiveOfferModel(
+                        job: widget.job,
+                        price: _priceController.text,
+                        message: _messageController.text,
+                        status: "Menunggu Respon",
+                      ),
+                    );
+
+                    widget.job.bidderCount = widget.job.offers.length;
+
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text("Penawaran berhasil dikirim."),
+                      ),
+                    );
+
+                    widget.onSubmit();
+                              },
               ),
             ),
           ],

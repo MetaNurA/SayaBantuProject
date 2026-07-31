@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import '../models/partner_job_model.dart';
+import '../models/job_model.dart';
 
 class PartnerJobCard extends StatelessWidget {
-  final PartnerJobModel job;
+  final JobModel job;
   final VoidCallback onTakeOffer;
 
   const PartnerJobCard({
@@ -28,20 +28,26 @@ class PartnerJobCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
 
-          // Thumbnail
-          Container(
-            width: 85,
-            height: 85,
-            decoration: BoxDecoration(
-              color: const Color(0xffFFF3E8),
-              borderRadius: BorderRadius.circular(14),
-            ),
-            child: const Icon(
-              Icons.handyman,
-              color: Color(0xffF97316),
-              size: 40,
-            ),
+         // Thumbnail
+        Container(
+          width: 85,
+          height: 85,
+          decoration: BoxDecoration(
+            color: const Color(0xffFFF3E8),
+            borderRadius: BorderRadius.circular(14),
           ),
+          clipBehavior: Clip.antiAlias,
+          child: job.imageBytes != null
+              ? Image.memory(
+                  job.imageBytes!,
+                  fit: BoxFit.cover,
+                )
+              : const Icon(
+                  Icons.handyman,
+                  color: Color(0xffF97316),
+                  size: 40,
+                ),
+        ),
 
           const SizedBox(width: 18),
 
@@ -159,20 +165,36 @@ class PartnerJobCard extends StatelessWidget {
 
               const SizedBox(height: 25),
 
-              ElevatedButton.icon(
-                onPressed: onTakeOffer,
-                icon: const Icon(Icons.flash_on),
-                label: const Text("Ambil & Nego"),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xffF97316),
-                  foregroundColor: Colors.white,
-                  elevation: 0,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 22,
-                    vertical: 16,
+              if (job.status == "Menunggu Respon")
+                ElevatedButton.icon(
+                  onPressed: null,
+                  icon: const Icon(Icons.hourglass_top),
+                  label: const Text("Menunggu Respon"),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.grey.shade400,
+                    foregroundColor: Colors.white,
+                    elevation: 0,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 22,
+                      vertical: 16,
+                    ),
+                  ),
+                )
+              else
+                ElevatedButton.icon(
+                  onPressed: onTakeOffer,
+                  icon: const Icon(Icons.flash_on),
+                  label: const Text("Ambil & Nego"),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xffF97316),
+                    foregroundColor: Colors.white,
+                    elevation: 0,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 22,
+                      vertical: 16,
+                    ),
                   ),
                 ),
-              ),
             ],
           ),
         ],

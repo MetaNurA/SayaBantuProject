@@ -5,6 +5,8 @@ import '../../../widgets/customer_sidebar.dart';
 
 import '../../models/job_model.dart';
 import '../../models/offer_model.dart';
+import '../../data/job_data.dart';
+import '../../data/active_offer_data.dart';
 
 import '../../screens/Screens_Customer/offer_screen.dart';
 import '../../screens/Screens_Customer/partner_profile_screen.dart';
@@ -27,41 +29,8 @@ class _CustomerMainDashboardState
   SidebarMenu selectedMenu = SidebarMenu.beranda;
 
   JobModel? selectedJob;
+  OfferModel? selectedOffer;
 
-  /// DATA JOB DISIMPAN DI SINI
-  final List<JobModel> jobs = [
-    JobModel(
-      title: "Service AC Bocor",
-      description: "AC mengeluarkan air sejak kemarin.",
-      price: "Rp150.000",
-      status: "Mencari Mitra",
-      time: "2 jam lalu",
-      offers: [
-        OfferModel(
-          name: "Andi Teknik AC",
-          verified: true,
-          jobsCompleted: 120,
-          price: "Rp145.000",
-        ),
-      ],
-    ),
-    JobModel(
-      title: "Perbaikan Kunci Rumah",
-      description: "Kunci utama macet dan sulit diputar.",
-      price: "Rp120.000",
-      status: "Sedang Dikerjakan",
-      time: "Kemarin",
-      offers: [],
-    ),
-    JobModel(
-      title: "Pasang Lampu Teras",
-      description: "Butuh pemasangan lampu taman.",
-      price: "Rp200.000",
-      status: "Selesai",
-      time: "3 hari lalu",
-      offers: [],
-    ),
-  ];
 
   Widget currentPage() {
     switch (selectedMenu) {
@@ -75,31 +44,91 @@ class _CustomerMainDashboardState
               selectedMenu = SidebarMenu.penawaran;
             });
           },
+
+          onFinish: (job) {
+            setState(() {
+
+            //status pekerjaan pelanggan
+              job.status = "Selesai";
+              job.completedDate = "Hari Ini";
+
+            //status penawaran mitra 
+              for (var activeOffer in activeOffers) {
+                if (activeOffer.job.title == job.title) {
+                  activeOffer.status = "Selesai";
+                }
+              }
+            });
+
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text("${job.title} selesai dikerjakan."),
+              ),
+            );
+          },
         );
 
       case SidebarMenu.penawaran:
-        return OfferScreen(
+       return OfferScreen(
           job: selectedJob!,
+
           onBack: () {
             setState(() {
               selectedMenu = SidebarMenu.beranda;
             });
           },
-          onOpenProfile: () {
+
+          onOpenProfile: (offer) {
             setState(() {
+              selectedOffer = offer;
               selectedMenu = SidebarMenu.profilMitra;
             });
           },
-          onAccept: () {
+
+          onAccept: (offer) {
             setState(() {
               selectedJob!.status = "Sedang Dikerjakan";
+
+              selectedJob!.partnerName = offer.name;
+              selectedJob!.acceptedPrice = offer.price;
+                for (var activeOffer in activeOffers) {
+                  if (activeOffer.job.title == selectedJob!.title &&
+                      activeOffer.price == offer.price) {
+                    activeOffer.status = "Sedang Dikerjakan";
+                  } else if (activeOffer.job.title == selectedJob!.title) {
+                    activeOffer.status = "Ditolak";
+                  }
+                }
+
               selectedMenu = SidebarMenu.beranda;
             });
+          },
+
+          onReject: (offer) {
+            setState(() {
+              for (var activeOffer in activeOffers) {
+                if (activeOffer.job.title == selectedJob!.title &&
+                    activeOffer.price == offer.price) {
+                  activeOffer.status = "Ditolak";
+                }
+              }
+              selectedJob!.offers.remove(offer);
+              selectedJob!.bidderCount = selectedJob!.offers.length;
+            });
+
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  "Penawaran ${offer.name} berhasil ditolak.",
+                ),
+              ),
+            );
           },
         );
 
       case SidebarMenu.profilMitra:
         return PartnerProfileScreen(
+          offer: selectedOffer!,
           onFinish: () {
             setState(() {
               selectedMenu = SidebarMenu.penawaran;

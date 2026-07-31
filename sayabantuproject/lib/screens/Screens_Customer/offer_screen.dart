@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import '../../widgets/offer_card.dart';
 import '../../models/job_model.dart';
+import '../../models/offer_model.dart';
 
 class OfferScreen extends StatelessWidget {
   final JobModel job;
-  final VoidCallback onAccept;
+  final Function(OfferModel) onAccept;
   final VoidCallback onBack;
-  final VoidCallback onOpenProfile;
+  final Function(OfferModel) onOpenProfile;
+  final Function(OfferModel) onReject;
 
   const OfferScreen({
     super.key,
@@ -14,6 +16,7 @@ class OfferScreen extends StatelessWidget {
     required this.onAccept,
     required this.onBack,
     required this.onOpenProfile,
+    required this.onReject,
     });
 
   @override
@@ -81,6 +84,7 @@ class OfferScreen extends StatelessWidget {
                     offer: job.offers[index],
                     onAccept: onAccept,
                     onOpenProfile: onOpenProfile,
+                    onReject: onReject,
                   );
                 },
               ),

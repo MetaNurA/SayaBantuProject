@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -19,6 +21,8 @@ class PartnerSidebar extends StatefulWidget {
 
 class _PartnerSidebarState extends State<PartnerSidebar> {
   String username = "Partner";
+  Uint8List? profileImage;
+  String initials = "P";
 
   @override
   void initState() {
@@ -26,12 +30,42 @@ class _PartnerSidebarState extends State<PartnerSidebar> {
     loadUser();
   }
 
-  Future<void> loadUser() async {
-    final prefs = await SharedPreferences.getInstance();
+  @override
+    void didChangeDependencies() {
+      super.didChangeDependencies();
+      loadUser();
+    }
 
-    setState(() {
-      username = prefs.getString("name") ?? "Partner";
-    });
+Future<void> loadUser() async {
+  final prefs = await SharedPreferences.getInstance();
+
+  final savedName = prefs.getString("name") ?? "Partner";
+  final image = prefs.getString("profile_image");
+
+  setState(() {
+    username = savedName;
+
+    if (image != null) {
+      profileImage = base64Decode(image);
+    } else {
+      profileImage = null;
+    }
+
+    final words = savedName.trim().split(" ");
+
+    if (words.length >= 2) {
+      initials =
+          "${words.first[0]}${words.last[0]}".toUpperCase();
+    } else {
+      initials = savedName[0].toUpperCase();
+    }
+  });
+}
+
+  @override
+  void didUpdateWidget(covariant PartnerSidebar oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    loadUser();
   }
 
   @override
@@ -43,21 +77,29 @@ class _PartnerSidebarState extends State<PartnerSidebar> {
         children: [
           const SizedBox(height: 25),
 
-Padding(
-  padding: const EdgeInsets.symmetric(horizontal: 20),
-  child: Row(
-    children: [
-      const CircleAvatar(
-        radius: 28,
-        backgroundColor: Colors.orange,
-        child: Text(
-          "EP",
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
+    Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Row(
+        children: [
+          CircleAvatar(
+            radius: 28,
+            backgroundColor: Colors.orange,
+            backgroundImage:
+                profileImage != null
+                    ? MemoryImage(profileImage!)
+                    : null,
+            child: profileImage == null
+                ? Text(
+                    username.isNotEmpty
+                        ? username[0].toUpperCase()
+                        : "P",
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  )
+                : null,
           ),
-        ),
-      ),
 
       const SizedBox(width: 12),
 
@@ -200,16 +242,9 @@ Container(
 
           _menu(
             context,
-            icon: Icons.attach_money,
-            title: "Riwayat Penghasilan",
-            menu: PartnerSidebarMenu.riwayatPenghasilan,
-          ),
-
-          _menu(
-            context,
-            icon: Icons.person_outline,
-            title: "Profil Saya",
-            menu: PartnerSidebarMenu.profil,
+            icon: Icons.settings,
+            title: "Pengaturan",
+            menu: PartnerSidebarMenu.pengaturan,
           ),
 
         ],

@@ -9,8 +9,8 @@ import '../../sections/landing/partner_cta_section.dart';
 import '../../sections/landing/stats_section.dart';
 import '../../sections/landing/testimonial_section.dart';
 import '../../sections/landing/why_section.dart';
-import '../../data/dummy_jobs.dart';
-import '../../models/partner_job_model.dart';
+import '../../data/job_data.dart';
+import '../../models/job_model.dart';
 import '../../sections/landing/search_result_section.dart';
 
 class LandingPage extends StatefulWidget {
@@ -25,7 +25,7 @@ class _LandingPageState extends State<LandingPage> {
 
   String searchKeyword = "";
 
-  List<PartnerJobModel> filteredJobs = [];
+  List<JobModel> filteredJobs = [];
 
   final GlobalKey layananKey = GlobalKey();
   final GlobalKey caraKerjaKey = GlobalKey();
@@ -47,7 +47,7 @@ class _LandingPageState extends State<LandingPage> {
   @override
     void initState() {
       super.initState();
-      filteredJobs = List.from(dummyJobs);
+      filteredJobs = List.from(jobs);
     }
 
     void searchJob(String keyword) {
@@ -55,9 +55,9 @@ class _LandingPageState extends State<LandingPage> {
         searchKeyword = keyword;
 
         if (keyword.isEmpty) {
-          filteredJobs = List.from(dummyJobs);
+          filteredJobs = List.from(jobs);
         } else {
-          filteredJobs = dummyJobs.where((job) {
+          filteredJobs = jobs.where((job) {
             return job.title.toLowerCase().contains(keyword.toLowerCase()) ||
                   job.description.toLowerCase().contains(keyword.toLowerCase()) ||
                   job.category.toLowerCase().contains(keyword.toLowerCase());

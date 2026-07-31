@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-
-import '../../data/dummy_jobs.dart';
-import '../../models/partner_job_model.dart';
+import '../../data/job_data.dart';
+import '../../models/job_model.dart';
 import '../../widgets/partner_job_card.dart';
 
 class PartnerDashboard extends StatelessWidget {
-  final Function(PartnerJobModel) onTakeOffer;
+  final Function(JobModel) onTakeOffer;
 
   const PartnerDashboard({
     super.key,
@@ -15,6 +14,10 @@ class PartnerDashboard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
   
+    final availableJobs = jobs.where((job) {
+      return job.status == "Mencari Mitra";
+    }).toList();
+
     return Container(
       color: Theme.of(context).scaffoldBackgroundColor,
       padding: const EdgeInsets.all(30),
@@ -48,7 +51,7 @@ class PartnerDashboard extends StatelessWidget {
                 child: _statCard(
                   Icons.work_outline,
                   "Total Lowongan",
-                  dummyJobs.length.toString(),
+                  jobs.length.toString(),
                   Colors.blue,
                 ),
               ),
@@ -77,12 +80,12 @@ class PartnerDashboard extends StatelessWidget {
 
           Expanded(
             child: ListView.builder(
-              itemCount: dummyJobs.length,
+              itemCount: availableJobs.length,
               itemBuilder: (context, index) {
                 return PartnerJobCard(
-                  job: dummyJobs[index],
-                 onTakeOffer: () {
-                    onTakeOffer(dummyJobs[index]);
+                  job: availableJobs[index],
+                  onTakeOffer: () {
+                    onTakeOffer(availableJobs[index]);
                   },
                 );
               },

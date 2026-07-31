@@ -6,14 +6,15 @@ import '../models/offer_model.dart';
 class OfferCard extends StatelessWidget {
   final JobModel job;
   final OfferModel offer;
-
-  final VoidCallback onAccept;
-  final VoidCallback onOpenProfile;
+  final Function(OfferModel) onReject;
+  final Function(OfferModel) onAccept;
+  final Function(OfferModel) onOpenProfile;
 
   const OfferCard({
     super.key,
     required this.job,
     required this.offer,
+    required this.onReject,
     required this.onAccept,
     required this.onOpenProfile,
   });
@@ -154,7 +155,7 @@ class OfferCard extends StatelessWidget {
                           onPressed: () {
                             Navigator.pop(context);
 
-                            onAccept();
+                            onAccept(offer);
                           },
                           child: const Text("Ya"),
                         ),
@@ -194,14 +195,7 @@ class OfferCard extends StatelessWidget {
                           ),
                           onPressed: () {
                             Navigator.pop(context);
-
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                  "Penawaran ${offer.name} ditolak.",
-                                ),
-                              ),
-                            );
+                            onReject(offer);
                           },
                           child: const Text("Tolak"),
                         ),
@@ -216,11 +210,12 @@ class OfferCard extends StatelessWidget {
               ),
 
               const SizedBox(height: 12),
-
-              TextButton(
-                onPressed: onOpenProfile,
-                child: const Text("Lihat Profil"),
-              ),
+                TextButton(
+                  onPressed: () {
+                    onOpenProfile(offer);
+                  },
+                  child: const Text("Lihat Profil"),
+                ),
             ],
           ),
         ],
