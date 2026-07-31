@@ -1,280 +1,690 @@
+import 'dart:typed_data';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
+import 'package:image_picker/image_picker.dart';
 import '../../screens/Screens_auth/login_page.dart';
 
-class SettingScreen extends StatefulWidget {
+class CustomerSettingScreen extends StatefulWidget {
+  final VoidCallback onProfileUpdate;
 
-  const SettingScreen({super.key});
+  const CustomerSettingScreen({
+    super.key,
+    required this.onProfileUpdate,
+    });
 
   @override
-  State<SettingScreen> createState() => _SettingScreenState();
+  State<CustomerSettingScreen> createState() =>
+      _PartnerSettingScreenState();
 }
 
-class _SettingScreenState extends State<SettingScreen> {
-  String name = "Pengguna";
-  String email = "-";
-  String role = "Pelanggan";
+class _PartnerSettingScreenState
+    extends State<CustomerSettingScreen> {
+  bool jobNotification = true;
 
-  bool notification = true;
-  bool darkMode = false;
+  String name = "";
+  String email = "";
+  String phone = "";
+  String address = "";
+
+  Uint8List? profileImage;
+
+  final ImagePicker picker = ImagePicker();
 
   @override
-  void initState() {
-    super.initState();
-    loadUser();
-  }
+    void initState() {
+      super.initState();
+      loadProfile();
+    }
 
-  Future<void> loadUser() async {
-    final prefs = await SharedPreferences.getInstance();
 
-    setState(() {
-      name = prefs.getString("name") ?? "Pengguna";
-      email = prefs.getString("email") ?? "-";
-      role = prefs.getString("role") ?? "Pelanggan";
-    });
-  }
+Future<void> loadProfile() async {
+  final prefs = await SharedPreferences.getInstance();
 
-  Future<void> logout() async {
-    final prefs = await SharedPreferences.getInstance();
+  setState(() {
+    // Data Profil
+    name = prefs.getString("name") ?? "";
+    email = prefs.getString("email") ?? "";
+    phone = prefs.getString("phone") ?? "";
+    address = prefs.getString("address") ?? "";
 
-    await prefs.setBool("isLoggedIn", false);
+    // Notifikasi pelanggan
+    jobNotification =
+        prefs.getBool("offer_notification") ?? true;
 
-    if (!mounted) return;
+    // Foto Profil
+    final image = prefs.getString("profile_image");
 
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (_) => const LoginScreen(),
+    if (image != null && image.isNotEmpty) {
+      profileImage = base64Decode(image);
+    } else {
+      profileImage = null;
+    }
+  });
+}
+Future<void> pickProfileImage() async {
+  final XFile? file = await picker.pickImage(
+    source: ImageSource.gallery,
+  );
+
+  if (file == null) return;
+
+  final bytes = await file.readAsBytes();
+
+  final prefs = await SharedPreferences.getInstance();
+
+  await prefs.setString(
+    "profile_image",
+    base64Encode(bytes),
+  );
+
+  setState(() {
+    profileImage = bytes;
+  });
+
+  widget.onProfileUpdate();
+}
+ 
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xffF8FAFC),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(30),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              "Pengaturan",
+              style: TextStyle(
+                fontSize: 34,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+
+            const SizedBox(height: 8),
+
+            const Text(
+              "Kelola profil, notifikasi, dan keamanan akun.",
+              style: TextStyle(
+                color: Colors.grey,
+              ),
+            ),
+
+            const SizedBox(height: 35),
+
+            /// =========================
+            /// HEADER PROFIL
+            /// =========================
+            Center(
+              child: Column(
+                children: [
+                  Stack(
+                    children: [
+                      CircleAvatar(
+                        radius: 55,
+                        backgroundColor: const Color(0xffFFF3E8),
+                        backgroundImage:
+                            profileImage != null
+                                ? MemoryImage(profileImage!)
+                                : null,
+                        child: profileImage == null
+                            ? const Icon(
+                                Icons.person,
+                                size: 60,
+                                color: Color(0xffF97316),
+                              )
+                            : null,
+                      ),
+
+                      Positioned(
+                        bottom: 0,
+                        right: 0,
+                        child: InkWell(
+                            onTap: pickProfileImage,
+                            child: Container(
+                              decoration: const BoxDecoration(
+                                color: Color(0xffF97316),
+                                shape: BoxShape.circle,
+                              ),
+                              padding: const EdgeInsets.all(7),
+                              child: const Icon(
+                                Icons.camera_alt,
+                                size: 18,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 18),
+
+                  Text(
+                    name,
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+
+                  const SizedBox(height: 6),
+
+                  Text(
+                    email,
+                    style: TextStyle(
+                      color: Colors.grey.shade600,
+                    ),
+                  ),
+
+                  const SizedBox(height: 20),
+
+                  SizedBox(
+                    width: 170,
+                    height: 45,
+                    child: ElevatedButton.icon(
+                      onPressed: () async {
+                        final nameController = TextEditingController(text: name);
+                        final emailController = TextEditingController(text: email);
+                        final phoneController = TextEditingController(text: phone);
+                        final addressController = TextEditingController(text: address);
+
+                        showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              title: const Text("Edit Profil"),
+                              content: SizedBox(
+                                width: 450,
+                                child: SingleChildScrollView(
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+
+                                      TextField(
+                                        controller: nameController,
+                                        decoration: const InputDecoration(
+                                          labelText: "Nama",
+                                          prefixIcon: Icon(Icons.person_outline),
+                                        ),
+                                      ),
+
+                                      const SizedBox(height: 15),
+
+                                      TextField(
+                                        controller: emailController,
+                                        decoration: const InputDecoration(
+                                          labelText: "Email",
+                                          prefixIcon: Icon(Icons.email_outlined),
+                                        ),
+                                      ),
+
+                                      const SizedBox(height: 15),
+
+                                      TextField(
+                                        controller: phoneController,
+                                        decoration: const InputDecoration(
+                                          labelText: "Nomor HP",
+                                          prefixIcon: Icon(Icons.phone_outlined),
+                                        ),
+                                      ),
+
+                                      const SizedBox(height: 15),
+
+                                      TextField(
+                                        controller: addressController,
+                                        maxLines: 2,
+                                        decoration: const InputDecoration(
+                                          labelText: "Alamat",
+                                          prefixIcon: Icon(Icons.location_on_outlined),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              actions: [
+
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: const Text("Batal"),
+                                ),
+
+                                ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: const Color(0xffF97316),
+                                    foregroundColor: Colors.white,
+                                  ),
+                                  onPressed: () async {
+                                    final prefs =
+                                        await SharedPreferences.getInstance();
+
+                                    await prefs.setString(
+                                        "name", nameController.text);
+
+                                    await prefs.setString(
+                                        "email", emailController.text);
+
+                                    await prefs.setString(
+                                        "phone", phoneController.text);
+
+                                    await prefs.setString(
+                                        "address", addressController.text);
+
+                                    Navigator.pop(context);
+
+                                    await loadProfile();
+                                    
+                                    widget.onProfileUpdate();
+
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content:
+                                            Text("Profil berhasil diperbarui."),
+                                      ),
+                                    );
+                                  },
+                                  child: const Text("Simpan"),
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      },
+                      icon: const Icon(Icons.edit),
+                      label: const Text("Edit Profil"),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xffF97316),
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius:
+                              BorderRadius.circular(12),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 40),
+
+            /// =========================
+            /// INFORMASI AKUN
+            /// =========================
+
+            const Text(
+              "Informasi Akun",
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+              ),
+            ),
+
+            const SizedBox(height: 15),
+
+            _buildCard(
+              icon: Icons.person_outline,
+              title: "Nama",
+              subtitle: name,
+            ),
+
+            _buildCard(
+              icon: Icons.email_outlined,
+              title: "Email",
+              subtitle: email,
+            ),
+
+            _buildCard(
+              icon: Icons.phone_outlined,
+              title: "Nomor HP",
+              subtitle: phone.isEmpty ? "-" : phone,
+            ),
+
+            _buildCard(
+              icon: Icons.location_on_outlined,
+              title: "Alamat",
+              subtitle: address.isEmpty ? "-" : address,
+            ),
+
+            const SizedBox(height: 35),
+
+            /// =========================
+            /// NOTIFIKASI
+            /// =========================
+
+            const Text(
+              "Notifikasi",
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+              ),
+            ),
+
+            const SizedBox(height: 15),
+
+            Card(
+              elevation: 0,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+                side: const BorderSide(
+                  color: Color(0xffE5E7EB),
+                ),
+              ),
+              child: SwitchListTile(
+                value: jobNotification,
+                activeColor: const Color(0xffF97316),
+                secondary: const Icon(
+                  Icons.notifications_active_outlined,
+                  color: Color(0xffF97316),
+                ),
+                title: const Text(
+                  "Notifikasi Penawaran",
+                ),
+                subtitle: const Text(
+                  "Terima notifikasi ketika mitra mengirim penawaran pada pekerjaan Anda.",
+                ),
+                onChanged: (value) async {
+                  final prefs = await SharedPreferences.getInstance();
+
+                  await prefs.setBool(
+                    "offer_notification",
+                    value,
+                  );
+
+                  setState(() {
+                    jobNotification = value;
+                  });
+
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        value
+                            ? "Notifikasi penawaran diaktifkan."
+                            : "Notifikasi penawaran dinonaktifkan.",
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+
+            const SizedBox(height: 35),
+
+            /// =========================
+            /// KEAMANAN
+            /// =========================
+
+            const Text(
+              "Keamanan",
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+              ),
+            ),
+
+            const SizedBox(height: 15),
+
+            Card(
+              elevation: 0,
+              shape: RoundedRectangleBorder(
+                borderRadius:
+                    BorderRadius.circular(16),
+                side: const BorderSide(
+                  color: Color(0xffE5E7EB),
+                ),
+              ),
+              child: Column(
+                children: [
+
+                  ListTile(
+                    leading: const Icon(
+                      Icons.lock_outline,
+                      color: Color(0xffF97316),
+                    ),
+                    title:
+                        const Text("Ganti Password"),
+                    trailing: const Icon(
+                        Icons.chevron_right),
+                    onTap: () {
+                      final oldPasswordController = TextEditingController();
+                      final newPasswordController = TextEditingController();
+                      final confirmPasswordController = TextEditingController();
+
+                      showDialog(
+                        context: context,
+                        builder: (_) {
+                          return AlertDialog(
+                            title: const Text("Ganti Password"),
+                            content: SizedBox(
+                              width: 400,
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+
+                                  TextField(
+                                    controller: oldPasswordController,
+                                    obscureText: true,
+                                    decoration: const InputDecoration(
+                                      labelText: "Password Lama",
+                                      prefixIcon: Icon(Icons.lock_outline),
+                                    ),
+                                  ),
+
+                                  const SizedBox(height: 15),
+
+                                  TextField(
+                                    controller: newPasswordController,
+                                    obscureText: true,
+                                    decoration: const InputDecoration(
+                                      labelText: "Password Baru",
+                                      prefixIcon: Icon(Icons.lock),
+                                    ),
+                                  ),
+
+                                  const SizedBox(height: 15),
+
+                                  TextField(
+                                    controller: confirmPasswordController,
+                                    obscureText: true,
+                                    decoration: const InputDecoration(
+                                      labelText: "Konfirmasi Password",
+                                      prefixIcon: Icon(Icons.lock_reset),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+
+                            actions: [
+
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                child: const Text("Batal"),
+                              ),
+
+                              ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: const Color(0xffF97316),
+                                  foregroundColor: Colors.white,
+                                ),
+                                onPressed: () async {
+
+                                  final prefs =
+                                      await SharedPreferences.getInstance();
+
+                                  final currentPassword =
+                                      prefs.getString("password") ?? "";
+
+                                  if (oldPasswordController.text !=
+                                      currentPassword) {
+
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text("Password lama salah"),
+                                      ),
+                                    );
+                                    return;
+                                  }
+
+                                  if (newPasswordController.text !=
+                                      confirmPasswordController.text) {
+
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content:
+                                            Text("Konfirmasi password tidak sesuai"),
+                                      ),
+                                    );
+                                    return;
+                                  }
+
+                                  if (newPasswordController.text.length < 6) {
+
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text(
+                                          "Password minimal 6 karakter",
+                                        ),
+                                      ),
+                                    );
+                                    return;
+                                  }
+
+                                  await prefs.setString(
+                                    "password",
+                                    newPasswordController.text,
+                                  );
+
+                                  if (!context.mounted) return;
+
+                                  Navigator.pop(context);
+
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text(
+                                        "Password berhasil diperbarui",
+                                      ),
+                                    ),
+                                  );
+                                },
+                                child: const Text("Simpan"),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    },
+                  ),
+
+                  const Divider(height: 1),
+
+                  ListTile(
+                    leading: const Icon(
+                      Icons.logout,
+                      color: Colors.red,
+                    ),
+                    title: const Text(
+                      "Logout",
+                      style: TextStyle(
+                        color: Colors.red,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    trailing: const Icon(
+                        Icons.chevron_right),
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (_) => AlertDialog(
+                          title:
+                              const Text("Logout"),
+                          content: const Text(
+                            "Apakah Anda yakin ingin keluar dari akun ini?",
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pop(
+                                    context);
+                              },
+                              child:
+                                  const Text("Batal"),
+                            ),
+
+                            ElevatedButton(
+                              style:
+                                  ElevatedButton
+                                      .styleFrom(
+                                backgroundColor:
+                                    Colors.red,
+                                foregroundColor:
+                                    Colors.white,
+                              ),
+                              onPressed: () async {
+                                final prefs = await SharedPreferences.getInstance();
+
+                                await prefs.setBool("isLoggedIn", false);
+
+                                if (!context.mounted) return;
+
+                                Navigator.pushAndRemoveUntil(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => const LoginScreen(),
+                                  ),
+                                  (route) => false,
+                                );
+                              },
+                              child:
+                                  const Text("Logout"),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 40),
+          ],
+        ),
       ),
     );
   }
-  Future<void> _showChangePasswordDialog() async {
-    final oldPasswordController = TextEditingController();
-    final newPasswordController = TextEditingController();
-    final confirmPasswordController = TextEditingController();
 
-    await showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text("Ubah Password"),
-          content: SizedBox(
-            width: 400,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextField(
-                  controller: oldPasswordController,
-                  obscureText: true,
-                  decoration: const InputDecoration(
-                    labelText: "Password Lama",
-                  ),
-                ),
-
-                const SizedBox(height: 15),
-
-                TextField(
-                  controller: newPasswordController,
-                  obscureText: true,
-                  decoration: const InputDecoration(
-                    labelText: "Password Baru",
-                  ),
-                ),
-
-                const SizedBox(height: 15),
-
-                TextField(
-                  controller: confirmPasswordController,
-                  obscureText: true,
-                  decoration: const InputDecoration(
-                    labelText: "Konfirmasi Password",
-                  ),
-                ),
-              ],
-            ),
+  Widget _buildCard({
+    required IconData icon,
+    required String title,
+    required String subtitle,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 15),
+      child: Card(
+        elevation: 0,
+        shape: RoundedRectangleBorder(
+          borderRadius:
+              BorderRadius.circular(16),
+          side: const BorderSide(
+            color: Color(0xffE5E7EB),
           ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: const Text("Batal"),
-            ),
-
-            ElevatedButton(
-              onPressed: () async {
-                final prefs =
-                    await SharedPreferences.getInstance();
-
-                final currentPassword =
-                    prefs.getString("password") ?? "";
-
-                if (oldPasswordController.text != currentPassword) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text("Password lama salah"),
-                    ),
-                  );
-                  return;
-                }
-
-                if (newPasswordController.text.isEmpty) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text("Password baru tidak boleh kosong"),
-                    ),
-                  );
-                  return;
-                }
-
-                if (newPasswordController.text !=
-                    confirmPasswordController.text) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text("Konfirmasi password tidak sama"),
-                    ),
-                  );
-                  return;
-                }
-
-                await prefs.setString(
-                  "password",
-                  newPasswordController.text,
-                );
-
-                if (!mounted) return;
-
-                Navigator.pop(context);
-
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text("Password berhasil diubah"),
-                  ),
-                );
-              },
-              child: const Text("Simpan"),
-            ),
-          ],
-        );
-      },
+        ),
+        child: ListTile(
+          leading: Icon(
+            icon,
+            color: const Color(0xffF97316),
+          ),
+          title: Text(title),
+          subtitle: Text(subtitle),
+        ),
+      ),
     );
   }
-            Widget settingTile({
-              required IconData icon,
-              required String title,
-              String? subtitle,
-              Widget? trailing,
-              VoidCallback? onTap,
-            }) {
-              return Card(
-                elevation: 0,
-                margin: const EdgeInsets.only(bottom: 15),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(14),
-                ),
-                child: ListTile(
-                  leading: Icon(
-                    icon,
-                    color: const Color(0xffF97316),
-                  ),
-                  title: Text(title),
-                  subtitle: subtitle == null ? null : Text(subtitle),
-                  trailing: trailing,
-                  onTap: onTap,
-                ),
-              );
-            }
-
-            @override
-Widget build(BuildContext context) {
-  return Container(
-    color: const Color(0xffF4F7FB),
-    padding: const EdgeInsets.all(30),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          "Pengaturan",
-          style: TextStyle(
-            fontSize: 30,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-
-        const SizedBox(height: 30),
-
-        Expanded(
-          child: ListView(
-            children: [
-              settingTile(
-                icon: Icons.person,
-                title: name,
-                subtitle: "$email\n$role",
-              ),
-
-              settingTile(
-                icon: Icons.lock_outline,
-                title: "Ubah Password",
-                subtitle: "Ganti password akun Anda",
-                onTap: _showChangePasswordDialog,
-              ),
-
-              settingTile(
-                icon: Icons.notifications_none,
-                title: "Notifikasi",
-                trailing: Switch(
-                  value: notification,
-                  onChanged: (value) {
-                    setState(() {
-                      notification = value;
-                    });
-                  },
-                ),
-              ),
-
-              settingTile(
-                icon: Icons.logout,
-                title: "Logout",
-                onTap: () async {
-                  final result = await showDialog<bool>(
-                    context: context,
-                    builder: (_) => AlertDialog(
-                      title: const Text("Logout"),
-                      content: const Text(
-                        "Apakah Anda yakin ingin keluar?",
-                      ),
-                      actions: [
-                        TextButton(
-                          onPressed: () =>
-                              Navigator.pop(context, false),
-                          child: const Text("Batal"),
-                        ),
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.red,
-                          ),
-                          onPressed: () =>
-                              Navigator.pop(context, true),
-                          child: const Text(
-                            "Logout",
-                            style: TextStyle(color: Colors.white),
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-
-                  if (result == true) {
-                    logout();
-                  }
-                },
-              ),
-            ],
-          ),
-        ),
-      ],
-    ),
-  );
-}
 }

@@ -82,12 +82,12 @@ class CustomNavbar extends StatelessWidget {
               /// Tombol Masuk
               TextButton(
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const LoginScreen(),
-                    ),
-                  );
+                  Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const LoginScreen(),
+                  ),
+                );
                 },
                 child: const Text("Masuk"),
               ),
@@ -101,12 +101,12 @@ class CustomNavbar extends StatelessWidget {
                 height: 50,
                 backgroundColor: AppColors.primary,
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const RegisterScreen(),
-                    ),
-                  );
+                  Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const RegisterScreen(),
+                  ),
+                );
                 },
               ),
             ],

@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/sidebar_menu.dart';
@@ -13,12 +15,14 @@ class CustomerSidebar extends StatefulWidget {
   });
 
   @override
+
   State<CustomerSidebar> createState() => _CustomerSidebarState();
 }
 
 class _CustomerSidebarState extends State<CustomerSidebar> {
   String name = "Pengguna";
   String role = "Pelanggan";
+  Uint8List? profileImage;
 
   @override
   void initState() {
@@ -27,13 +31,21 @@ class _CustomerSidebarState extends State<CustomerSidebar> {
   }
 
   Future<void> loadUser() async {
-    final prefs = await SharedPreferences.getInstance();
+  final prefs = await SharedPreferences.getInstance();
 
-    setState(() {
-      name = prefs.getString("name") ?? "Pengguna";
-      role = prefs.getString("role") ?? "Pelanggan";
-    });
-  }
+  final image = prefs.getString("profile_image");
+
+  setState(() {
+    name = prefs.getString("name") ?? "Pengguna";
+    role = prefs.getString("role") ?? "Pelanggan";
+
+    if (image != null && image.isNotEmpty) {
+      profileImage = base64Decode(image);
+    } else {
+      profileImage = null;
+    }
+  });
+}
 
   String getInitials(String text) {
     final words = text.trim().split(" ");
@@ -47,6 +59,11 @@ class _CustomerSidebarState extends State<CustomerSidebar> {
     }
 
     return (words[0][0] + words[1][0]).toUpperCase();
+  }
+  @override
+  void didUpdateWidget(covariant CustomerSidebar oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    loadUser();
   }
 
   @override
@@ -67,13 +84,18 @@ class _CustomerSidebarState extends State<CustomerSidebar> {
                 CircleAvatar(
                   radius: 24,
                   backgroundColor: const Color(0xff2196F3),
-                  child: Text(
-                    getInitials(name),
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+                  backgroundImage: profileImage != null
+                      ? MemoryImage(profileImage!)
+                      : null,
+                  child: profileImage == null
+                      ? Text(
+                          getInitials(name),
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        )
+                      : null,
                 ),
 
                 const SizedBox(width: 12),

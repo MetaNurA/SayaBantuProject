@@ -139,8 +139,12 @@ class _CustomerMainDashboardState
       case SidebarMenu.notifikasi:
         return NotificationScreen();
 
-      case SidebarMenu.pengaturan:
-        return const SettingScreen();
+     case SidebarMenu.pengaturan:
+        return CustomerSettingScreen(
+          onProfileUpdate: () {
+            setState(() {});
+          },
+        );
     }
   }
 
