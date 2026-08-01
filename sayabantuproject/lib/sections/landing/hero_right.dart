@@ -3,201 +3,277 @@ import '../../widgets/custom_button.dart';
 
 class HeroRight extends StatelessWidget {
   const HeroRight({super.key});
+@override
+Widget build(BuildContext context) {
+  return LayoutBuilder(
+    builder: (context, constraints) {
 
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: 460,
-      height: 420,
-      child: Stack(
-        clipBehavior: Clip.none,
-        children: [
+      final width = constraints.maxWidth;
 
-          /// CARD
-          Positioned(
-            bottom: 0,
-            child: Container(
-              width: 440,
-              padding: const EdgeInsets.all(18),
-              decoration: BoxDecoration(
-                color: const Color(0xff202C3F),
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(
-                  color: Theme.of(context).cardColor.withOpacity(.08),
+      final isMobile = width < 768;
+      final isTablet = width >= 768 && width < 1100;
+      final isLaptop = width >= 1100 && width < 1440;
+      final isDesktop = width >= 1440;
+
+      final double cardWidth = isMobile
+        ? width
+        : width.clamp(320.0, 520.0);
+
+
+      return SizedBox(
+        width: double.infinity,
+       height: isMobile
+          ? 390
+          : isTablet
+              ? 430
+              : isLaptop
+                  ? 470
+                  : 500,
+        child: Stack(
+          clipBehavior: Clip.none,
+          children: [
+
+            /// CARD
+            Positioned(
+              bottom: isDesktop ? 20 : 0,
+              child: Container(
+                width: cardWidth,
+                padding: EdgeInsets.all(
+                  isMobile
+                      ? 14
+                      : isLaptop
+                          ? 18
+                          : 22,
                 ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(.35),
-                    blurRadius: 35,
-                    offset: const Offset(0, 20),
-                  )
-                ],
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
+                decoration: BoxDecoration(
+                  color: const Color(0xff202C3F),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color: Theme.of(context)
+                        .cardColor
+                        .withOpacity(.08),
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(.35),
+                      blurRadius: 35,
+                      offset: const Offset(0, 20),
+                    )
+                  ],
+                ),
 
-                  Text(
-                    "PENAWARAN MASUK — SERVICE AC",
-                    style: TextStyle(
-                      color: Colors.white.withOpacity(.45),
-                      fontSize: 12,
-                      letterSpacing: 1,
+                child: Column(
+                  crossAxisAlignment:
+                      CrossAxisAlignment.start,
+
+                  children: [
+
+                    Text(
+                      "PENAWARAN MASUK — SERVICE AC",
+                      style: TextStyle(
+                        color: Colors.white.withOpacity(.45),
+                        fontSize: isMobile ? 10 : 12,
+                        letterSpacing: 1,
+                      ),
                     ),
-                  ),
 
-                  const SizedBox(height: 18),
+                    SizedBox(
+                      height: isMobile ? 12 : 18,
+                    ),
 
-                  _offerItem(
-                    active: true,
-                    initials: "BS",
-                    name: "Pak Budi S.",
-                    rating: "4.9",
-                    point: "248 poin",
-                    price: "Rp 170.000",
-                    badge: "ANTREAN #1",
-                  ),
 
-                  const SizedBox(height: 12),
+                    _offerItem(
+                       isMobile: isMobile,
+                      active: true,
+                      initials: "BS",
+                      name: "Pak Budi S.",
+                      rating: "4.9",
+                      point: "248 poin",
+                      price: "Rp 170.000",
+                      badge: "ANTREAN #1",
+                    ),
 
-                  _offerItem(
-                    initials: "EP",
-                    name: "Mas Eko P.",
-                    rating: "4.7",
-                    point: "182 poin",
-                    price: "Rp 155.000",
-                  ),
 
-                  const SizedBox(height: 12),
+                    const SizedBox(height: 12),
 
-                  _offerItem(
-                    initials: "JW",
-                    name: "Pak Joko W.",
-                    rating: "4.5",
-                    point: "97 poin",
-                    price: "Rp 140.000",
-                  ),
 
-                  const SizedBox(height: 16),
+                    _offerItem(
+                       isMobile: isMobile,
+                      initials: "EP",
+                      name: "Mas Eko P.",
+                      rating: "4.7",
+                      point: "182 poin",
+                      price: "Rp 155.000",
+                    ),
 
-                  SizedBox(
-                    width: double.infinity,
-                    child: CustomButton(
-                      text: "✓ Terima Mitra Terbaik",
+
+                    const SizedBox(height: 12),
+
+
+                    _offerItem(
+                       isMobile: isMobile,
+                      initials: "JW",
+                      name: "Pak Joko W.",
+                      rating: "4.5",
+                      point: "97 poin",
+                      price: "Rp 140.000",
+                    ),
+
+
+                    const SizedBox(height: 16),
+
+
+                    SizedBox(
                       width: double.infinity,
-                      height: 48,
-                      backgroundColor: const Color(0xff17C67A),
-                      onPressed: () {},
+                      child: CustomButton(
+                        text: "✓ Terima Mitra Terbaik",
+                        width: double.infinity,
+                        height: isMobile
+                              ? 42
+                              : isTablet
+                                  ? 46
+                                  : 50,
+                        backgroundColor:
+                            const Color(0xff17C67A),
+                        onPressed: () {},
+                      ),
                     ),
-                  ),
-                ],
-              ),
-            ),
-          ),
 
-          /// VERIFIED BADGE
-          Positioned(
-            right: 0,
-            top: 15,
-            child: Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 16,
-                vertical: 12,
-              ),
-              decoration: BoxDecoration(
-                color: const Color(0xff18C57A),
-                borderRadius: BorderRadius.circular(14),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.green.withOpacity(.4),
-                    blurRadius: 20,
-                  )
-                ],
-              ),
-              child: const Row(
-                children: [
-                  const Icon(
-                    Icons.verified,
-                    color: Color(0xFF1E293B),
-                    size: 18,
-                  ),
-                  SizedBox(width: 8),
-                  Column(
-                    crossAxisAlignment:
-                        CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Terverifikasi",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 13,
-                        ),
-                      ),
-                      Text(
-                        "Admin reviewed",
-                        style: TextStyle(
-                          color: Colors.white70,
-                          fontSize: 11,
-                        ),
-                      ),
-                    ],
-                  )
-                ],
-              ),
-            ),
-          ),
-
-          /// ONLINE BADGE
-          Positioned(
-            bottom: -18,
-            left: 20,
-            child: Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 14,
-                vertical: 8,
-              ),
-              decoration: BoxDecoration(
-                color: const Color(0xff293549),
-                borderRadius: BorderRadius.circular(25),
-                border: Border.all(
-                  color: Theme.of(context).cardColor.withOpacity(0.12)
+                  ],
                 ),
               ),
-              child: const Row(
-                children: [
-                  CircleAvatar(
-                    radius: 4,
-                    backgroundColor: Color(0xff17C67A),
-                  ),
-                  SizedBox(width: 8),
-                  Text(
-                    "47 mitra online sekarang",
-                    style: TextStyle(
-                      color: Colors.white70,
-                      fontSize: 12,
+            ),
+
+
+            /// VERIFIED BADGE
+            Positioned(
+              right: isMobile ? 5 : 0,
+              top: isMobile
+                  ? 5
+                  : isLaptop
+                      ? 10
+                      : 18,
+
+              child: Container(
+                padding: EdgeInsets.symmetric(
+                  horizontal: isMobile ? 10 : 16,
+                  vertical: isMobile ? 8 : 12,
+                ),
+
+                decoration: BoxDecoration(
+                  color: const Color(0xff18C57A),
+                  borderRadius:
+                      BorderRadius.circular(14),
+                ),
+
+                child: Row(
+                  children: [
+
+                    Icon(
+                      Icons.verified,
+                      color: Color(0xFF1E293B),
+                      size: isMobile ? 16 : 20,
                     ),
-                  )
-                ],
+
+                    SizedBox(width: 8),
+
+
+                    Column(
+                      crossAxisAlignment:
+                          CrossAxisAlignment.start,
+
+                      children: [
+
+                        Text(
+                          "Terverifikasi",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: isMobile ? 11 : 13,
+                          ),
+                        ),
+
+
+                        Text(
+                          "Admin reviewed",
+                          style: TextStyle(
+                            color: Colors.white70,
+                            fontSize: isMobile ? 10 : 11,
+                          ),
+                        ),
+
+                      ],
+                    )
+
+                  ],
+                ),
               ),
             ),
-          )
-        ],
-      ),
-    );
-  }
+
+
+            /// ONLINE BADGE
+            Positioned(
+              bottom: isDesktop ? -8 : -16,
+              left: isMobile ? 10 : 20,
+
+              child: Container(
+                padding: EdgeInsets.symmetric(
+                horizontal: isMobile ? 10 : 16,
+                vertical: isMobile ? 6 : 9,
+            ),
+
+                decoration: BoxDecoration(
+                  color: const Color(0xff293549),
+                  borderRadius:
+                      BorderRadius.circular(25),
+                ),
+
+                child: const Row(
+                  children: [
+
+                    CircleAvatar(
+                      radius: 4,
+                      backgroundColor:
+                          Color(0xff17C67A),
+                    ),
+
+                    SizedBox(width: 8),
+
+
+                    Text(
+                      "47 mitra online sekarang",
+                      style: TextStyle(
+                        color: Colors.white70,
+                        fontSize: 12,
+                      ),
+                    )
+
+                  ],
+                ),
+              ),
+            )
+
+          ],
+        ),
+      );
+    },
+  );
+}
 
   Widget _offerItem({
-    required String initials,
-    required String name,
-    required String rating,
-    required String point,
-    required String price,
-    String? badge,
-    bool active = false,
-  }) {
+  required bool isMobile,
+  required String initials,
+  required String name,
+  required String rating,
+  required String point,
+  required String price,
+  String? badge,
+  bool active = false,
+    }) {
     return Container(
-      padding: const EdgeInsets.all(14),
+      padding: EdgeInsets.all(
+          isMobile ? 10 : 14,
+      ),
       decoration: BoxDecoration(
         color: active
             ? const Color(0xff2B3445)
@@ -213,7 +289,7 @@ class HeroRight extends StatelessWidget {
         children: [
 
           CircleAvatar(
-            radius: 20,
+            radius: isMobile ? 16 : 20,
             backgroundColor: active
                 ? const Color(0xffF97316)
                 : const Color(0xff3E4A5F),
@@ -226,7 +302,9 @@ class HeroRight extends StatelessWidget {
             ),
           ),
 
-          const SizedBox(width: 14),
+          SizedBox(
+              width:isMobile ? 10 : 14,
+          ),
 
           Expanded(
             child: Column(
@@ -236,9 +314,9 @@ class HeroRight extends StatelessWidget {
 
                 Text(
                   name,
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: Colors.white,
-                    fontWeight: FontWeight.bold,
+                    fontSize: isMobile ? 13 : 15,
                   ),
                 ),
 

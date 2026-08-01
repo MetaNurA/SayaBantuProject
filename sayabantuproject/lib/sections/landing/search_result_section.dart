@@ -17,112 +17,287 @@ class SearchResultSection extends StatelessWidget {
       return const SizedBox();
     }
 
-    return Container(
-      width: double.infinity,
-      color: Colors.white,
-      padding: const EdgeInsets.symmetric(
-        horizontal: 80,
-        vertical: 50,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+    return LayoutBuilder(
+      builder: (context, constraints) {
 
-          Text(
-            "Hasil pencarian \"$keyword\"",
-            style: const TextStyle(
-              fontSize: 30,
-              fontWeight: FontWeight.bold,
-            ),
+        final isMobile = constraints.maxWidth < 700;
+
+        return Container(
+          width: double.infinity,
+          color: Colors.white,
+
+          padding: EdgeInsets.symmetric(
+            horizontal: isMobile ? 20 : 80,
+            vertical: isMobile ? 35 : 50,
           ),
 
-          const SizedBox(height: 30),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
 
-          if (jobs.isEmpty)
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(50),
-              decoration: BoxDecoration(
-                color: const Color(0xffF8FAFC),
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: const Column(
-                children: [
-                  Icon(
-                    Icons.search_off,
-                    size: 80,
-                    color: Colors.grey,
-                  ),
-                  SizedBox(height: 20),
-                  Text(
-                    "Pekerjaan tidak ditemukan",
-                    style: TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-            )
-          else
-            ListView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: jobs.length,
-              itemBuilder: (_, index) {
-                final job = jobs[index];
+            children: [
 
-                return Card(
-                  margin: const EdgeInsets.only(bottom: 18),
-                  child: ListTile(
-                    leading: const CircleAvatar(
-                      backgroundColor: Color(0xffFFF3E8),
-                      child: Icon(
-                        Icons.work_outline,
-                        color: Color(0xffF97316),
+              Text(
+                "Hasil pencarian \"$keyword\"",
+                style: TextStyle(
+                  fontSize: isMobile ? 22 : 30,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+
+              SizedBox(
+                height: isMobile ? 20 : 30,
+              ),
+
+
+              if (jobs.isEmpty)
+
+                Container(
+                  width: double.infinity,
+
+                  padding: EdgeInsets.all(
+                    isMobile ? 30 : 50,
+                  ),
+
+                  decoration: BoxDecoration(
+                    color: const Color(0xffF8FAFC),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+
+                  child: Column(
+                    children: [
+
+                      Icon(
+                        Icons.search_off,
+                        size: isMobile ? 60 : 80,
+                        color: Colors.grey,
                       ),
-                    ),
 
-                    title: Text(job.title),
+                      const SizedBox(height: 20),
 
-                    subtitle: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(job.description),
-                        const SizedBox(height: 6),
-                        Text(
-                          job.location,
-                          style: const TextStyle(color: Colors.grey),
+                      Text(
+                        "Pekerjaan tidak ditemukan",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: isMobile ? 18 : 22,
+                          fontWeight: FontWeight.bold,
                         ),
-                      ],
-                    ),
-
-                    trailing: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          job.price,
-                          style: const TextStyle(
-                            color: Colors.green,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 5),
-                        const Text(
-                          "Mencari Mitra",
-                          style: TextStyle(
-                            color: Colors.orange,
-                            fontSize: 12,
-                          ),
-                        )
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                );
-              },
-            )
-        ],
-      ),
+                )
+
+
+              else
+
+                ListView.builder(
+
+                  shrinkWrap: true,
+
+                  physics:
+                      const NeverScrollableScrollPhysics(),
+
+                  itemCount: jobs.length,
+
+                  itemBuilder: (_, index) {
+
+                    final job = jobs[index];
+
+
+                    return Card(
+
+                      margin: const EdgeInsets.only(
+                        bottom: 18,
+                      ),
+
+                      child: Padding(
+
+                        padding:
+                            const EdgeInsets.all(12),
+
+                        child: isMobile
+
+                            ? Column(
+                                crossAxisAlignment:
+                                    CrossAxisAlignment.start,
+
+                                children: [
+
+                                  Row(
+                                    children: [
+
+                                      const CircleAvatar(
+                                        backgroundColor:
+                                            Color(0xffFFF3E8),
+
+                                        child: Icon(
+                                          Icons.work_outline,
+                                          color:
+                                              Color(0xffF97316),
+                                        ),
+                                      ),
+
+                                      const SizedBox(
+                                        width: 12,
+                                      ),
+
+                                      Expanded(
+                                        child: Text(
+                                          job.title,
+                                          style:
+                                              const TextStyle(
+                                            fontWeight:
+                                                FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+
+
+                                  const SizedBox(
+                                    height: 12,
+                                  ),
+
+
+                                  Text(
+                                    job.description,
+                                  ),
+
+
+                                  const SizedBox(
+                                    height: 8,
+                                  ),
+
+
+                                  Text(
+                                    job.location,
+                                    style:
+                                        const TextStyle(
+                                      color:
+                                          Colors.grey,
+                                    ),
+                                  ),
+
+
+                                  const SizedBox(
+                                    height: 12,
+                                  ),
+
+
+                                  Text(
+                                    job.price,
+                                    style:
+                                        const TextStyle(
+                                      color: Colors.green,
+                                      fontWeight:
+                                          FontWeight.bold,
+                                    ),
+                                  ),
+
+
+                                  const SizedBox(
+                                    height: 5,
+                                  ),
+
+
+                                  const Text(
+                                    "Mencari Mitra",
+                                    style:
+                                        TextStyle(
+                                      color:
+                                          Colors.orange,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ],
+                              )
+
+
+                            : ListTile(
+
+                                leading:
+                                    const CircleAvatar(
+                                  backgroundColor:
+                                      Color(0xffFFF3E8),
+
+                                  child: Icon(
+                                    Icons.work_outline,
+                                    color:
+                                        Color(0xffF97316),
+                                  ),
+                                ),
+
+                                title:
+                                    Text(job.title),
+
+                                subtitle:
+                                    Column(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.start,
+
+                                  children: [
+
+                                    Text(
+                                      job.description,
+                                    ),
+
+                                    const SizedBox(
+                                      height: 6,
+                                    ),
+
+                                    Text(
+                                      job.location,
+                                      style:
+                                          const TextStyle(
+                                        color:
+                                            Colors.grey,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+
+                                trailing:
+                                    Column(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.center,
+
+                                  children: [
+
+                                    Text(
+                                      job.price,
+                                      style:
+                                          const TextStyle(
+                                        color:
+                                            Colors.green,
+                                        fontWeight:
+                                            FontWeight.bold,
+                                      ),
+                                    ),
+
+                                    const SizedBox(
+                                      height: 5,
+                                    ),
+
+                                    const Text(
+                                      "Mencari Mitra",
+                                      style:
+                                          TextStyle(
+                                        color:
+                                            Colors.orange,
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                      ),
+                    );
+                  },
+                )
+            ],
+          ),
+        );
+      },
     );
   }
 }

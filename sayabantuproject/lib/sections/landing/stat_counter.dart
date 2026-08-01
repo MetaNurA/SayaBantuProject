@@ -18,66 +18,77 @@ class StatCounter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: Row(
-        children: [
-          Expanded(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(
-                  icon,
-                  color: Colors.amber.shade300,
-                  size: 38,
-                ),
+    return LayoutBuilder(
+      builder: (context, constraints) {
 
-                const SizedBox(height: 20),
+        final isSmall = constraints.maxWidth < 250;
 
-                Text(
-                  value,
-                  style: const TextStyle(
-                    fontSize: 38,
-                    fontWeight: FontWeight.w900,
-                    color: Colors.white,
+        return Row(
+          children: [
+
+            Expanded(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+
+                  Icon(
+                    icon,
+                    color: Colors.amber.shade300,
+                    size: isSmall ? 30 : 38,
                   ),
-                ),
 
-                const SizedBox(height: 10),
-
-                Text(
-                  title,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.w700,
+                  SizedBox(
+                    height: isSmall ? 12 : 20,
                   ),
-                  textAlign: TextAlign.center,
-                ),
 
-                const SizedBox(height: 6),
-
-                Text(
-                  subtitle,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Colors.white.withOpacity(.85),
-                    fontSize: 15,
-                    height: 1.6,
+                  Text(
+                    value,
+                    style: TextStyle(
+                      fontSize: isSmall ? 30 : 38,
+                      fontWeight: FontWeight.w900,
+                      color: Colors.white,
+                    ),
                   ),
-                ),
-              ],
+
+                  const SizedBox(height: 10),
+
+                  Text(
+                    title,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: isSmall ? 15 : 18,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+
+                  const SizedBox(height: 6),
+
+                  Text(
+                    subtitle,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Colors.white.withOpacity(.85),
+                      fontSize: isSmall ? 13 : 15,
+                      height: 1.6,
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
 
-          if (showDivider)
-            Container(
-              margin: const EdgeInsets.symmetric(horizontal: 25),
-              width: 1,
-              height: 180,
-              color: Colors.white.withOpacity(.18),
-            ),
-        ],
-      ),
+            if (showDivider && !isSmall)
+              Container(
+                margin: const EdgeInsets.symmetric(
+                  horizontal: 25,
+                ),
+                width: 1,
+                height: 150,
+                color: Colors.white.withOpacity(.18),
+              ),
+          ],
+        );
+      },
     );
   }
 }

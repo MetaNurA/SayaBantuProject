@@ -16,57 +16,65 @@ class FeatureItem extends StatelessWidget {
     required this.description,
   });
 
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 28),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            width: 54,
-            height: 54,
-            decoration: BoxDecoration(
-              color: bgColor,
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Icon(
-              icon,
-              color: iconColor,
-              size: 28,
-            ),
-          ),
+ @override
+    Widget build(BuildContext context) {
+      return LayoutBuilder(
+        builder: (context, constraints) {
+          final isSmall = constraints.maxWidth < 350;
 
-          const SizedBox(width: 18),
-
-          Expanded(
-            child: Column(
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 28),
+            child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontSize: 19,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xff08162F),
+                Container(
+                  width: isSmall ? 46 : 54,
+                  height: isSmall ? 46 : 54,
+                  decoration: BoxDecoration(
+                    color: bgColor,
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Icon(
+                    icon,
+                    color: iconColor,
+                    size: isSmall ? 24 : 28,
                   ),
                 ),
 
-                const SizedBox(height: 8),
+                SizedBox(
+                  width: isSmall ? 12 : 18,
+                ),
 
-                Text(
-                  description,
-                  style: const TextStyle(
-                    color: Color(0xff64748B),
-                    fontSize: 15,
-                    height: 1.8,
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: TextStyle(
+                          fontSize: isSmall ? 16 : 19,
+                          fontWeight: FontWeight.bold,
+                          color: const Color(0xff08162F),
+                        ),
+                      ),
+
+                      const SizedBox(height: 8),
+
+                      Text(
+                        description,
+                        style: TextStyle(
+                          color: const Color(0xff64748B),
+                          fontSize: isSmall ? 13 : 15,
+                          height: 1.8,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],
             ),
-          ),
-        ],
-      ),
-    );
-  }
+          );
+        },
+      );
+    }
 }

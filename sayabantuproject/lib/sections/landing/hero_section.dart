@@ -17,54 +17,87 @@ class HeroSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final screenHeight = MediaQuery.of(context).size.height;
+    final width = MediaQuery.of(context).size.width;
+
+    final isMobile = width < 768;
+    final isTablet = width >= 768 && width < 1100;
+    final isLaptop = width >= 1100 && width < 1440;
 
     return Container(
       width: double.infinity,
-      height: screenHeight,
+      constraints: BoxConstraints(
+        minHeight: isMobile
+            ? 700
+            : MediaQuery.of(context).size.height,
+      ),
       decoration: const BoxDecoration(
         image: DecorationImage(
           image: AssetImage(
-            'assets/images/herosection.png',
+            "assets/images/herosection.png",
           ),
           fit: BoxFit.cover,
         ),
       ),
       child: Container(
-        decoration: BoxDecoration(
-          color: Colors.black.withOpacity(0.58),
-        ),
+        color: Colors.black.withOpacity(.58),
         child: Center(
-          child: SizedBox(
-            width: 1180,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(
+              maxWidth: 1440,
+            ),
             child: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 20,
-                vertical: 25,
+              padding: EdgeInsets.symmetric(
+                horizontal: isMobile
+                    ? 20
+                    : isTablet
+                        ? 24
+                        : isLaptop
+                            ? 40
+                            : 60,
+                vertical: isMobile ? 60 : 40,
               ),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Expanded(
-                    flex: 6,
-                    child: HeroLeft(
-                      onCariJasa: onCariJasa,
-                      onJadiMitra: onJadiMitra,
-                      onSearch: onSearch,
-                    ),
-                  ),
+              child: isMobile
+                  ? Column(
+                      children: [
+                        HeroLeft(
+                          onCariJasa: onCariJasa,
+                          onJadiMitra: onJadiMitra,
+                          onSearch: onSearch,
+                        ),
+                        const SizedBox(height: 40),
+                        const HeroRight(),
+                      ],
+                    )
+                  : Row(
+                      crossAxisAlignment:
+                          CrossAxisAlignment.center,
+                      children: [
 
-                  const SizedBox(width: 30),
+                        Expanded(
+                          flex: 6,
+                          child: HeroLeft(
+                            onCariJasa: onCariJasa,
+                            onJadiMitra: onJadiMitra,
+                            onSearch: onSearch,
+                          ),
+                        ),
 
-                  const Expanded(
-                    flex: 4,
-                    child: Align(
-                      alignment: Alignment.centerRight,
-                      child: HeroRight(),
+                        SizedBox(
+                          width: width > 1700
+                              ? 80
+                              : width > 1400
+                                  ? 60
+                                  : width > 1100
+                                      ? 40
+                                      : 20,
+                        ),
+
+                        const Expanded(
+                          flex: 5,
+                          child: HeroRight(),
+                        ),
+                      ],
                     ),
-                  ),
-                ],
-              ),
             ),
           ),
         ),

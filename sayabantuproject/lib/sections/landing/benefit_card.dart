@@ -16,46 +16,67 @@ class BenefitCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+
+    final isMobile = width < 768;
+    final isTablet = width >= 768 && width < 1100;
+
     return Container(
-      padding: const EdgeInsets.all(28),
+      padding: EdgeInsets.all(
+        isMobile ? 18 : 24,
+      ),
       decoration: BoxDecoration(
-        color: Theme.of(context).cardColor.withOpacity(.06),
-        borderRadius: BorderRadius.circular(22),
+        color: Colors.white.withOpacity(.05),
+        borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: Theme.of(context).cardColor.withOpacity(.08),
+          color: Colors.white.withOpacity(.08),
         ),
       ),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+
           Icon(
             icon,
             color: iconColor,
-            size: 34,
+            size: isMobile ? 30 : 36,
           ),
 
-          const SizedBox(height: 24),
+          SizedBox(
+            height: isMobile ? 16 : 22,
+          ),
 
           Text(
             title,
+            maxLines: 2,
+            overflow: TextOverflow.visible,
             style: TextStyle(
-              color: Theme.of(context).cardColor,
+              color: Colors.white,
               fontWeight: FontWeight.bold,
-              fontSize: 22,
+              fontSize: isMobile
+                  ? 18
+                  : isTablet
+                      ? 20
+                      : 22,
             ),
           ),
 
-          const SizedBox(height: 12),
-
-          Text(
-            description,
-            style: TextStyle(
-              color: Colors.white.withOpacity(.65),
-              height: 1.7,
-              fontSize: 16,
-            ),
+          SizedBox(
+            height: isMobile ? 10 : 14,
           ),
-        ],
+
+         Text(
+          description,
+          maxLines: 3,
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(
+            color: Colors.white70,
+            height: 1.6,
+            fontSize: isMobile ? 14 : 15,
+          ),
+        ),
+                ],
       ),
     );
   }
