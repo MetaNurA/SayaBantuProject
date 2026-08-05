@@ -15,7 +15,12 @@ class JobCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return LayoutBuilder(
+    builder: (context, constraints) {
+
+      final isMobile = constraints.maxWidth < 700;
+
+      return Container(
       padding: const EdgeInsets.all(22),
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
@@ -57,55 +62,54 @@ class JobCard extends StatelessWidget {
                 Text(
                   job.title,
                   style: TextStyle(
-                    fontSize: 20,
+                    fontSize: isMobile ? 17 : 20,
                     fontWeight: FontWeight.bold,
                     color: Color(0xff1E293B),
                   ),
                 ),
 
                 const SizedBox(height: 10),
-
-                Text(
-                  job.description,
-                  style: TextStyle(
-                    color: Colors.grey,
-                    height: 1.6,
+                  Text(
+                    job.description,
+                    style: TextStyle(
+                      fontSize: isMobile ? 13 : 14,
+                      color: Colors.grey,
+                      height: 1.6,
+                    ),
                   ),
-                ),
 
                 if (job.partnerName != null) ...[
                     const SizedBox(height: 12),
-
-                    Row(
-                      children: [
-                        const Icon(
-                          Icons.person,
-                          size: 18,
-                          color: Colors.green,
-                        ),
-                        const SizedBox(width: 6),
-                        Expanded(
-                          child: Text(
+                      Wrap(
+                        spacing: 6,
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        children: [
+                          const Icon(
+                            Icons.person,
+                            size: 18,
+                            color: Colors.green,
+                          ),
+                          Text(
                             "Mitra: ${job.partnerName}",
                             style: const TextStyle(
                               fontWeight: FontWeight.bold,
                               color: Colors.green,
                             ),
                           ),
-                        ),
-                      ],
-                    ),
+                        ],
+                      ),
 
                     const SizedBox(height: 6),
 
-                    Row(
+                    Wrap(
+                      spacing: 6,
+                      crossAxisAlignment: WrapCrossAlignment.center,
                       children: [
                         const Icon(
                           Icons.payments,
                           size: 18,
                           color: Colors.orange,
                         ),
-                        const SizedBox(width: 6),
                         Text(
                           "Harga Deal: ${job.acceptedPrice}",
                           style: const TextStyle(
@@ -119,7 +123,10 @@ class JobCard extends StatelessWidget {
 
                   const SizedBox(height: 18),
 
-                  Row(
+                  Wrap(
+                    spacing: 24,
+                    runSpacing: 8,
+                    crossAxisAlignment: WrapCrossAlignment.center,
                     children: [
                       if (job.status == "Mencari Mitra") ...[
                         Text(
@@ -129,14 +136,11 @@ class JobCard extends StatelessWidget {
                             fontSize: 14,
                           ),
                         ),
-                        const SizedBox(width: 24),
 
                         _info(
                           Icons.people_alt_outlined,
                           "${job.offerCount} Penawar",
                         ),
-
-                        const SizedBox(width: 24),
                       ],
 
                       _info(
@@ -149,11 +153,16 @@ class JobCard extends StatelessWidget {
             ),
           ),
 
-          const SizedBox(width: 20),
+          SizedBox(
+            width: isMobile ? 12 : 20,
+          ),
 
           // Status
           Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
+            crossAxisAlignment:
+                isMobile
+                    ? CrossAxisAlignment.start
+                    : CrossAxisAlignment.end,
             children: [
               Container(
                 padding: const EdgeInsets.symmetric(
@@ -190,6 +199,10 @@ class JobCard extends StatelessWidget {
                     onOpenOffer(job);
                   },
                   style: ElevatedButton.styleFrom(
+                    minimumSize: Size(
+                      isMobile ? 120 : 0,
+                      44,
+                      ),
                     backgroundColor: const Color(0xffF97316),
                     foregroundColor: Colors.white,
                     elevation: 0,
@@ -246,24 +259,26 @@ class JobCard extends StatelessWidget {
         ],
       ),
     );
+    },
+    );
   }
 
   Widget _info(IconData icon, String text) {
-    return Row(
-      children: [
-        Icon(
-          icon,
-          size: 18,
+  return Row(
+    children: [
+      Icon(
+        icon,
+        size: 18,
+        color: Colors.grey,
+      ),
+      const SizedBox(width: 6),
+      Text(
+        text,
+        style: const TextStyle(
           color: Colors.grey,
         ),
-        const SizedBox(width: 6),
-        Text(
-          text,
-          style: const TextStyle(
-            color: Colors.grey,
-          ),
-        ),
-      ],
-    );
-  }
+      ),
+    ],
+  );
+}
 }

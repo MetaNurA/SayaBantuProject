@@ -147,26 +147,59 @@ class _CustomerMainDashboardState
         );
     }
   }
+@override
+Widget build(BuildContext context) {
+  return LayoutBuilder(
+    builder: (context, constraints) {
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Row(
-        children: [
-          CustomerSidebar(
-            activeMenu: selectedMenu,
-            onMenuSelected: (menu) {
-              setState(() {
-                selectedMenu = menu;
-              });
-            },
-          ),
+      final bool isDesktop = constraints.maxWidth >= 1000;
 
-          Expanded(
-            child: currentPage(),
-          ),
-        ],
-      ),
-    );
-  }
+      return Scaffold(
+
+        drawer: isDesktop
+            ? null
+            : Drawer(
+                child: SafeArea(
+                  child: CustomerSidebar(
+                    activeMenu: selectedMenu,
+                    onMenuSelected: (menu) {
+                      setState(() {
+                        selectedMenu = menu;
+                      });
+
+                      Navigator.pop(context);
+                    },
+                  ),
+                ),
+              ),
+
+        appBar: isDesktop
+            ? null
+            : AppBar(
+                title: const Text("Dashboard Pelanggan"),
+              ),
+
+        body: isDesktop
+            ? Row(
+                children: [
+
+                  CustomerSidebar(
+                    activeMenu: selectedMenu,
+                    onMenuSelected: (menu) {
+                      setState(() {
+                        selectedMenu = menu;
+                      });
+                    },
+                  ),
+
+                  Expanded(
+                    child: currentPage(),
+                  ),
+                ],
+              )
+            : currentPage(),
+      );
+    },
+  );
+}
 }
