@@ -22,9 +22,7 @@ class BenefitCard extends StatelessWidget {
     final isTablet = width >= 768 && width < 1100;
 
     return Container(
-      padding: EdgeInsets.all(
-        isMobile ? 18 : 24,
-      ),
+      padding: EdgeInsets.all(isMobile ? 18 : 24),
       decoration: BoxDecoration(
         color: Colors.white.withOpacity(.05),
         borderRadius: BorderRadius.circular(20),
@@ -36,21 +34,17 @@ class BenefitCard extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-
           Icon(
             icon,
             color: iconColor,
             size: isMobile ? 30 : 36,
           ),
 
-          SizedBox(
-            height: isMobile ? 16 : 22,
-          ),
+          SizedBox(height: isMobile ? 16 : 22),
 
           Text(
             title,
-            maxLines: 2,
-            overflow: TextOverflow.visible,
+            softWrap: true,
             style: TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.bold,
@@ -62,21 +56,18 @@ class BenefitCard extends StatelessWidget {
             ),
           ),
 
-          SizedBox(
-            height: isMobile ? 10 : 14,
-          ),
+          SizedBox(height: isMobile ? 10 : 14),
 
-         Text(
-          description,
-          maxLines: 3,
-          overflow: TextOverflow.ellipsis,
-          style: TextStyle(
-            color: Colors.white70,
-            height: 1.6,
-            fontSize: isMobile ? 14 : 15,
+          Text(
+            description,
+            softWrap: true,
+            style: TextStyle(
+              color: Colors.white70,
+              height: 1.6,
+              fontSize: isMobile ? 14 : 15,
+            ),
           ),
-        ),
-                ],
+        ],
       ),
     );
   }

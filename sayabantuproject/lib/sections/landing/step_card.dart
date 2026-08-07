@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
 class StepCard extends StatelessWidget {
   final String number;
@@ -20,108 +21,136 @@ class StepCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      clipBehavior: Clip.none,
-      children: [
-        Container(
-          constraints: const BoxConstraints(
-            minHeight: 350,
-          ),
-          padding: const EdgeInsets.fromLTRB(24, 65, 24, 25),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(22),
-            border: Border.all(
-              color: const Color(0xffE6EDF5),
-            ),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Icon(
-                icon,
-                color: numberColor,
-                size: 32,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isSmall = constraints.maxWidth < 260;
+
+        return Stack(
+          clipBehavior: Clip.none,
+          children: [
+            Container(
+              constraints: BoxConstraints(
+                minHeight: isSmall ? 320 : 350,
               ),
-
-              const SizedBox(height: 20),
-
-              Text(
-                title,
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w800,
-                  color: Color(0xff08162F),
+              padding: EdgeInsets.fromLTRB(
+                isSmall ? 18 : 24,
+                65,
+                isSmall ? 18 : 24,
+                isSmall ? 20 : 25,
+              ),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(22),
+                border: Border.all(
+                  color: const Color(0xffE6EDF5),
                 ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(.05),
+                    blurRadius: 18,
+                    offset: const Offset(0, 10),
+                  ),
+                ],
               ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Icon(
+                    icon,
+                    color: numberColor,
+                    size: isSmall ? 28 : 32,
+                  ),
 
-              const SizedBox(height: 12),
+                  const SizedBox(height: 20),
 
-              Text(
-                description,
-                style: const TextStyle(
-                  color: Color(0xff64748B),
-                  height: 1.6,
-                  fontSize: 15,
-                ),
-              ),
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontSize: isSmall ? 17 : 18,
+                      fontWeight: FontWeight.w800,
+                      color: const Color(0xff08162F),
+                    ),
+                  ),
 
-              const SizedBox(height: 20),
+                  const SizedBox(height: 12),
 
-              ...points.map(
-                (e) => Padding(
-                  padding: const EdgeInsets.only(bottom: 10),
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.check,
-                        size: 16,
-                        color: numberColor,
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          e,
-                          style: const TextStyle(
-                            color: Color(0xff334155),
+                  Text(
+                    description,
+                    style: TextStyle(
+                      color: const Color(0xff64748B),
+                      height: 1.6,
+                      fontSize: isSmall ? 14 : 15,
+                    ),
+                  ),
+
+                  const SizedBox(height: 20),
+
+                  ...points.map(
+                    (point) => Padding(
+                      padding: const EdgeInsets.only(bottom: 10),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Icon(
+                            Icons.check_circle,
+                            size: 18,
+                            color: numberColor,
                           ),
-                        ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              point,
+                              style: TextStyle(
+                                color: const Color(0xff334155),
+                                fontSize: isSmall ? 13 : 14,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
+                    ),
+                  ),
+                ],
+              ),
+            )
+                .animate()
+                .fadeIn(duration: 600.ms)
+                .slideY(begin: .2)
+                .scale(begin: const Offset(.97, .97)),
+
+            Positioned(
+              top: -24,
+              left: 28,
+              child: Container(
+                width: 54,
+                height: 54,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: numberColor,
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: numberColor.withOpacity(.35),
+                      blurRadius: 16,
+                      offset: const Offset(0, 6),
+                    ),
+                  ],
+                ),
+                child: Text(
+                  number,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 17,
                   ),
                 ),
-              ),
-            ],
-          ),
-        ),
-
-        Positioned(
-          top: -24,
-          left: 28,
-          child: Container(
-            width: 54,
-            height: 54,
-            decoration: BoxDecoration(
-              color: numberColor,
-              shape: BoxShape.circle,
-              boxShadow: [
-                BoxShadow(
-                  color: numberColor.withOpacity(.35),
-                  blurRadius: 16,
-                ),
-              ],
+              )
+                  .animate()
+                  .scale(duration: 500.ms, curve: Curves.elasticOut),
             ),
-            alignment: Alignment.center,
-            child: Text(
-              number,
-              style: const TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ),
-      ],
+          ],
+        );
+      },
     );
   }
 }

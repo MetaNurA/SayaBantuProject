@@ -86,236 +86,243 @@ class _RegisterScreenState extends State<RegisterScreen> {
       );
     }
 }
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xffF8FAFC),
-      body: Center(
-        child: SingleChildScrollView(
-          child: Container(
-            width: 460,
-            padding: const EdgeInsets.all(35),
-            decoration: BoxDecoration(
-              color: Theme.of(context).cardColor,
-              borderRadius: BorderRadius.circular(24),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.08),
-                  blurRadius: 25,
-                  offset: const Offset(0, 12),
-                )
-              ],
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isMobile = constraints.maxWidth < 700;
 
-                /// Logo
-                Center(
-                  child: Column(
-                    children: [
-                      Container(
-                        width: 75,
-                        height: 75,
-                        decoration: BoxDecoration(
-                          color: AppColors.primary,
-                          borderRadius: BorderRadius.circular(18),
+        return Scaffold(
+          backgroundColor: const Color(0xffF8FAFC),
+          body: Center(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: SingleChildScrollView(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    maxWidth: isMobile ? double.infinity : 460,
+                  ),
+                  child: Container(
+                    width: double.infinity,
+                    padding: EdgeInsets.all(isMobile ? 24 : 35),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).cardColor,
+                      borderRadius: BorderRadius.circular(24),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.08),
+                          blurRadius: 25,
+                          offset: const Offset(0, 12),
                         ),
-                        child: Icon(
-                          Icons.person_add_alt_1,
-                          color: Theme.of(context).cardColor,
-                          size: 36,
-                        ),
-                      ),
-
-                      const SizedBox(height: 20),
-
-                      const Text(
-                        "Daftar Akun",
-                        style: TextStyle(
-                          fontSize: 30,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-
-                      const SizedBox(height: 8),
-
-                      const Text(
-                        "Buat akun SayaBantu sekarang",
-                        style: TextStyle(
-                          color: Colors.grey,
-                          fontSize: 15,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-
-                const SizedBox(height: 35),
-
-                /// Nama
-                const Text(
-                  "Nama Lengkap",
-                  style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-
-                const SizedBox(height: 8),
-
-                TextField(
-                  controller: _nameController,
-                  decoration: InputDecoration(
-                    hintText: "Masukkan nama lengkap",
-                    prefixIcon: const Icon(Icons.person_outline),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(14),
+                      ],
                     ),
-                  ),
-                ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        /// Logo
+                        Center(
+                          child: Column(
+                            children: [
+                              Container(
+                                width: isMobile ? 65 : 75,
+                                height: isMobile ? 65 : 75,
+                                decoration: BoxDecoration(
+                                  color: AppColors.primary,
+                                  borderRadius: BorderRadius.circular(18),
+                                ),
+                                child: Icon(
+                                  Icons.person_add_alt_1,
+                                  color: Theme.of(context).cardColor,
+                                  size: isMobile ? 30 : 36,
+                                ),
+                              ),
 
-                const SizedBox(height: 20),
+                              const SizedBox(height: 20),
 
-                /// Email
-                const Text(
-                  "Email",
-                  style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
+                              Text(
+                                "Daftar Akun",
+                                style: TextStyle(
+                                  fontSize: isMobile ? 24 : 30,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
 
-                const SizedBox(height: 8),
+                              const SizedBox(height: 8),
 
-                TextField(
-                  controller: _emailController,
-                  decoration: InputDecoration(
-                    hintText: "Masukkan email",
-                    prefixIcon: const Icon(Icons.email_outlined),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(14),
-                    ),
-                  ),
-                ),
-
-                const SizedBox(height: 20),
-
-                /// Password
-                const Text(
-                  "Password",
-                  style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-
-                const SizedBox(height: 8),
-
-                TextField(
-                  controller: _passwordController,
-                  obscureText: _obscurePassword,
-                  decoration: InputDecoration(
-                    hintText: "Masukkan password",
-                    prefixIcon: const Icon(Icons.lock_outline),
-                    suffixIcon: IconButton(
-                      onPressed: () {
-                        setState(() {
-                          _obscurePassword = !_obscurePassword;
-                        });
-                      },
-                      icon: Icon(
-                        _obscurePassword
-                            ? Icons.visibility_off
-                            : Icons.visibility,
-                      ),
-                    ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(14),
-                    ),
-                  ),
-                ),
-
-                const SizedBox(height: 20),
-
-                /// Role
-                const Text(
-                  "Daftar Sebagai",
-                  style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-
-                const SizedBox(height: 8),
-
-                DropdownButtonFormField<String>(
-                  value: _selectedRole,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(14),
-                    ),
-                  ),
-                  items: const [
-                    DropdownMenuItem(
-                      value: "Pelanggan",
-                      child: Text("Pencari Jasa (Pelanggan)"),
-                    ),
-                    DropdownMenuItem(
-                      value: "Mitra",
-                      child: Text("Penyedia Jasa (Mitra)"),
-                    ),
-                  ],
-                  onChanged: widget.defaultRole != null
-                    ? null
-                    : (value) {
-                        setState(() {
-                          _selectedRole = value!;
-                        });
-                      },
-                ),
-
-                const SizedBox(height: 30),
-
-                /// Button Register
-                Center(
-                  child: CustomButton(
-                    text: "Daftar Sekarang",
-                    width: 390,
-                    height: 56,
-                    backgroundColor: AppColors.primary,
-                    onPressed: _register,
-                  ),
-                ),
-
-                const SizedBox(height: 25),
-
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text("Sudah punya akun?"),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.of(context).pushReplacement(
-                          PageRouteBuilder(
-                            pageBuilder: (_, __, ___) => const LoginScreen(),
-                            transitionDuration: Duration.zero,
-                            reverseTransitionDuration: Duration.zero,
+                              Text(
+                                "Buat akun SayaBantu sekarang",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: isMobile ? 14 : 15,
+                                ),
+                              ),
+                            ],
                           ),
-                        );
-                      },
-                      child: Text(
-                        "Masuk",
-                        style: TextStyle(
-                          color: AppColors.primary,
-                          fontWeight: FontWeight.bold,
                         ),
-                      ),
+
+                        const SizedBox(height: 30),
+
+                        /// Nama
+                        const Text(
+                          "Nama Lengkap",
+                          style: TextStyle(fontWeight: FontWeight.w600),
+                        ),
+
+                        const SizedBox(height: 8),
+
+                        TextField(
+                          controller: _nameController,
+                          decoration: InputDecoration(
+                            hintText: "Masukkan nama lengkap",
+                            prefixIcon: const Icon(Icons.person_outline),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(14),
+                            ),
+                          ),
+                        ),
+
+                        const SizedBox(height: 20),
+
+                        /// Email
+                        const Text(
+                          "Email",
+                          style: TextStyle(fontWeight: FontWeight.w600),
+                        ),
+
+                        const SizedBox(height: 8),
+
+                        TextField(
+                          controller: _emailController,
+                          decoration: InputDecoration(
+                            hintText: "Masukkan email",
+                            prefixIcon: const Icon(Icons.email_outlined),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(14),
+                            ),
+                          ),
+                        ),
+
+                        const SizedBox(height: 20),
+
+                        /// Password
+                        const Text(
+                          "Password",
+                          style: TextStyle(fontWeight: FontWeight.w600),
+                        ),
+
+                        const SizedBox(height: 8),
+
+                        TextField(
+                          controller: _passwordController,
+                          obscureText: _obscurePassword,
+                          decoration: InputDecoration(
+                            hintText: "Masukkan password",
+                            prefixIcon: const Icon(Icons.lock_outline),
+                            suffixIcon: IconButton(
+                              onPressed: () {
+                                setState(() {
+                                  _obscurePassword = !_obscurePassword;
+                                });
+                              },
+                              icon: Icon(
+                                _obscurePassword
+                                    ? Icons.visibility_off
+                                    : Icons.visibility,
+                              ),
+                            ),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(14),
+                            ),
+                          ),
+                        ),
+
+                        const SizedBox(height: 20),
+
+                        /// Role
+                        const Text(
+                          "Daftar Sebagai",
+                          style: TextStyle(fontWeight: FontWeight.w600),
+                        ),
+
+                        const SizedBox(height: 8),
+
+                        DropdownButtonFormField<String>(
+                          value: _selectedRole,
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(14),
+                            ),
+                          ),
+                          items: const [
+                            DropdownMenuItem(
+                              value: "Pelanggan",
+                              child: Text("Pencari Jasa (Pelanggan)"),
+                            ),
+                            DropdownMenuItem(
+                              value: "Mitra",
+                              child: Text("Penyedia Jasa (Mitra)"),
+                            ),
+                          ],
+                          onChanged: widget.defaultRole != null
+                              ? null
+                              : (value) {
+                                  setState(() {
+                                    _selectedRole = value!;
+                                  });
+                                },
+                        ),
+
+                        const SizedBox(height: 30),
+
+                        /// Button Register
+                        SizedBox(
+                          width: double.infinity,
+                          child: CustomButton(
+                            text: "Daftar Sekarang",
+                            width: double.infinity,
+                            height: 56,
+                            backgroundColor: AppColors.primary,
+                            onPressed: _register,
+                          ),
+                        ),
+
+                        const SizedBox(height: 25),
+
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Text("Sudah punya akun?"),
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pushReplacement(
+                                  PageRouteBuilder(
+                                    pageBuilder: (_, __, ___) =>
+                                        const LoginScreen(),
+                                    transitionDuration: Duration.zero,
+                                    reverseTransitionDuration: Duration.zero,
+                                  ),
+                                );
+                              },
+                              child: Text(
+                                "Masuk",
+                                style: TextStyle(
+                                  color: AppColors.primary,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
-              ],
+              ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

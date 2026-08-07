@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
 import 'hero_left.dart';
 import 'hero_right.dart';
@@ -57,47 +58,96 @@ class HeroSection extends StatelessWidget {
                 vertical: isMobile ? 60 : 40,
               ),
               child: isMobile
-                  ? Column(
-                      children: [
-                        HeroLeft(
-                          onCariJasa: onCariJasa,
-                          onJadiMitra: onJadiMitra,
-                          onSearch: onSearch,
-                        ),
-                        const SizedBox(height: 40),
-                        const HeroRight(),
-                      ],
-                    )
-                  : Row(
-                      crossAxisAlignment:
-                          CrossAxisAlignment.center,
-                      children: [
+                    ? Column(
+                        children: [
 
-                        Expanded(
-                          flex: 6,
-                          child: HeroLeft(
+                          HeroLeft(
                             onCariJasa: onCariJasa,
                             onJadiMitra: onJadiMitra,
                             onSearch: onSearch,
+                          )
+                              .animate()
+                              .fade(
+                                duration: 700.ms,
+                              )
+                              .slideY(
+                                begin: 0.3,
+                                end: 0,
+                                curve: Curves.easeOut,
+                                duration: 700.ms,
+                              ),
+
+                          const SizedBox(height: 40),
+
+                          const HeroRight()
+                              .animate()
+                              .fade(
+                                delay: 300.ms,
+                                duration: 700.ms,
+                              )
+                              .slideY(
+                                begin: 0.3,
+                                end: 0,
+                                curve: Curves.easeOut,
+                                duration: 700.ms,
+                              ),
+                        ],
+                      )
+                    : Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+
+                          Expanded(
+                            flex: 6,
+                            child: HeroLeft(
+                              onCariJasa: onCariJasa,
+                              onJadiMitra: onJadiMitra,
+                              onSearch: onSearch,
+                            )
+                                .animate()
+                                .fade(
+                                  duration: 800.ms,
+                                )
+                                .slideX(
+                                  begin: -0.25,
+                                  end: 0,
+                                  curve: Curves.easeOutCubic,
+                                  duration: 800.ms,
+                                ),
                           ),
-                        ),
 
-                        SizedBox(
-                          width: width > 1700
-                              ? 80
-                              : width > 1400
-                                  ? 60
-                                  : width > 1100
-                                      ? 40
-                                      : 20,
-                        ),
+                          SizedBox(
+                            width: width > 1700
+                                ? 80
+                                : width > 1400
+                                    ? 60
+                                    : width > 1100
+                                        ? 40
+                                        : 20,
+                          ),
 
-                        const Expanded(
-                          flex: 5,
-                          child: HeroRight(),
-                        ),
-                      ],
-                    ),
+                          Expanded(
+                            flex: 5,
+                            child: const HeroRight()
+                                .animate()
+                                .fade(
+                                  delay: 250.ms,
+                                  duration: 800.ms,
+                                )
+                                .slideX(
+                                  begin: 0.25,
+                                  end: 0,
+                                  curve: Curves.easeOutCubic,
+                                  duration: 800.ms,
+                                )
+                                .scale(
+                                  begin: const Offset(0.95, 0.95),
+                                  end: const Offset(1, 1),
+                                  duration: 800.ms,
+                                ),
+                          ),
+                        ],
+                      ),
             ),
           ),
         ),

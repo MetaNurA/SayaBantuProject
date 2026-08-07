@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../../data/job_data.dart';
 import '../../models/job_model.dart';
-
 import '../../sections/landing/category_section.dart';
 import '../../sections/landing/footer_section.dart';
 import '../../sections/landing/hero_section.dart';
@@ -36,7 +35,7 @@ class _LandingPageState extends State<LandingPage> {
   @override
   void initState() {
     super.initState();
-    filteredJobs = List.from(jobs);
+    filteredJobs = List<JobModel>.from(jobs);
   }
 
   void scrollTo(GlobalKey key) {
@@ -56,20 +55,24 @@ class _LandingPageState extends State<LandingPage> {
       searchKeyword = keyword;
 
       if (keyword.isEmpty) {
-        filteredJobs = List.from(jobs);
+        filteredJobs = List<JobModel>.from(jobs);
       } else {
         filteredJobs = jobs.where((job) {
-          return job.title.toLowerCase().contains(keyword.toLowerCase()) ||
-              job.description.toLowerCase().contains(keyword.toLowerCase()) ||
-              job.category.toLowerCase().contains(keyword.toLowerCase());
+          final query = keyword.toLowerCase();
+
+          return job.title.toLowerCase().contains(query) ||
+              job.description.toLowerCase().contains(query) ||
+              job.category.toLowerCase().contains(query);
         }).toList();
       }
     });
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (searchResultKey.currentContext != null) {
+      final context = searchResultKey.currentContext;
+
+      if (context != null) {
         Scrollable.ensureVisible(
-          searchResultKey.currentContext!,
+          context,
           duration: const Duration(milliseconds: 700),
           curve: Curves.easeInOut,
         );
@@ -84,7 +87,6 @@ class _LandingPageState extends State<LandingPage> {
         controller: scrollController,
         child: Column(
           children: [
-            /// ================= NAVBAR =================
             CustomNavbar(
               onLayanan: () => scrollTo(layananKey),
               onCaraKerja: () => scrollTo(caraKerjaKey),
@@ -92,16 +94,14 @@ class _LandingPageState extends State<LandingPage> {
               onTentang: () => scrollTo(tentangKey),
             ),
 
-            /// ================= HERO =================
             HeroSection(
               onCariJasa: () => scrollTo(layananKey),
               onJadiMitra: () => scrollTo(mitraKey),
               onSearch: searchJob,
             ),
 
-            /// ================= SEARCH RESULT =================
             if (searchKeyword.isNotEmpty)
-              Container(
+              KeyedSubtree(
                 key: searchResultKey,
                 child: SearchResultSection(
                   jobs: filteredJobs,
@@ -109,29 +109,21 @@ class _LandingPageState extends State<LandingPage> {
                 ),
               ),
 
-            /// ================= CATEGORY =================
-            Container(
+            KeyedSubtree(
               key: layananKey,
               child: const CategorySection(),
             ),
 
-            /// ================= HOW IT WORKS =================
-            Container(
+            KeyedSubtree(
               key: caraKerjaKey,
               child: const HowItWorksSection(),
             ),
 
-            /// ================= STATS =================
             const StatsSection(),
-
-            /// ================= WHY =================
             const WhySection(),
-
-            /// ================= TESTIMONIAL =================
             const TestimonialSection(),
 
-            /// ================= CTA MITRA =================
-            Container(
+            KeyedSubtree(
               key: mitraKey,
               child: PartnerCTASection(
                 onDaftarMitra: () => scrollTo(mitraKey),
@@ -139,8 +131,7 @@ class _LandingPageState extends State<LandingPage> {
               ),
             ),
 
-            /// ================= FOOTER =================
-            Container(
+            KeyedSubtree(
               key: tentangKey,
               child: const FooterSection(),
             ),

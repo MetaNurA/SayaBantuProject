@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../utils/responsive.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
 class HeroLeft extends StatefulWidget {
   final VoidCallback onCariJasa;
@@ -41,7 +42,7 @@ class _HeroLeftState extends State<HeroLeft> {
       children: [
 
         /// Badge
-        Container(
+       Container(
           padding: const EdgeInsets.symmetric(
             horizontal: 14,
             vertical: 7,
@@ -61,45 +62,54 @@ class _HeroLeftState extends State<HeroLeft> {
               fontWeight: FontWeight.w600,
             ),
           ),
-        ),
+        )
+            .animate()
+            .fadeIn(duration: 500.ms)
+            .slideX(begin: -.2),
 
         const SizedBox(height: 28),
 
         Text(
-          "Bantuan\nRumah",
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: Responsive.titleSize(context),
-            fontWeight: FontWeight.w800,
-            height: 1,
-          ),
-        ),
+            "Bantuan\nRumah",
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: Responsive.titleSize(context),
+              fontWeight: FontWeight.w800,
+              height: 1,
+            ),
+          )
+              .animate(delay: 200.ms)
+              .fadeIn(duration: 600.ms)
+              .slideY(begin: .3),
 
         const SizedBox(height: 4),
 
         RichText(
-          text: TextSpan(
-            style: TextStyle(
-              fontSize: Responsive.subtitleSize(context),
-              fontWeight: FontWeight.w800,
-              height: 1,
-            ),
-            children: const [
-              TextSpan(
-                text: "Tepat Harga,\n",
-                style: TextStyle(
-                  color: Color(0xFFFF7A00),
-                ),
-              ),
-              TextSpan(
-                text: "Tepat Waktu.",
-                style: TextStyle(
-                  color: Colors.white,
-                ),
-              ),
-            ],
+        text: TextSpan(
+          style: TextStyle(
+            fontSize: Responsive.subtitleSize(context),
+            fontWeight: FontWeight.w800,
+            height: 1,
           ),
+          children: const [
+            TextSpan(
+              text: "Tepat Harga,\n",
+              style: TextStyle(
+                color: Color(0xFFFF7A00),
+              ),
+            ),
+            TextSpan(
+              text: "Tepat Waktu.",
+              style: TextStyle(
+                color: Colors.white,
+              ),
+            ),
+          ],
         ),
+      )
+          .animate(delay: 350.ms)
+          .fadeIn(duration: 600.ms)
+          .slideX(begin: -.2),
 
         const SizedBox(height: 24),
 
@@ -115,7 +125,10 @@ class _HeroLeftState extends State<HeroLeft> {
               height: 1.8,
             ),
           ),
-        ),
+        )
+            .animate(delay: 500.ms)
+            .fadeIn()
+            .slideY(begin: .2),
 
         const SizedBox(height: 30),
 
@@ -131,7 +144,6 @@ class _HeroLeftState extends State<HeroLeft> {
             ),
             child: Row(
               children: [
-
                 const SizedBox(width: 15),
 
                 const Icon(
@@ -187,73 +199,82 @@ class _HeroLeftState extends State<HeroLeft> {
               ],
             ),
           ),
-        ),
+        )
+            .animate(delay: 700.ms)
+            .fadeIn(duration: 700.ms)
+            .slideY(begin: .3)
+            .scale(
+              begin: const Offset(0.95, 0.95),
+              curve: Curves.easeOut,
+            ),
 
         const SizedBox(height: 28),
 
-        isMobile
-            ? Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  SizedBox(
-                    height: 52,
-                    child: ElevatedButton(
-                      onPressed: widget.onCariJasa,
-                      child: const Text("Cari Jasa Sekarang"),
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  SizedBox(
-                    height: 52,
-                    child: OutlinedButton(
-                      onPressed: widget.onJadiMitra,
-                      child: const Text("Jadi Mitra"),
-                    ),
-                  ),
-                ],
-              )
-            : Wrap(
-                spacing: 16,
-                runSpacing: 16,
-                children: [
-                  ElevatedButton(
+        (isMobile
+          ? Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                SizedBox(
+                  height: 52,
+                  child: ElevatedButton(
                     onPressed: widget.onCariJasa,
                     child: const Text("Cari Jasa Sekarang"),
                   ),
-                  OutlinedButton(
+                ),
+                const SizedBox(height: 12),
+                SizedBox(
+                  height: 52,
+                  child: OutlinedButton(
                     onPressed: widget.onJadiMitra,
                     child: const Text("Jadi Mitra"),
                   ),
-                ],
-              ),
+                ),
+              ],
+            )
+          : Wrap(
+              spacing: 16,
+              runSpacing: 16,
+              children: [
+                ElevatedButton(
+                  onPressed: widget.onCariJasa,
+                  child: const Text("Cari Jasa Sekarang"),
+                ),
+                OutlinedButton(
+                  onPressed: widget.onJadiMitra,
+                  child: const Text("Jadi Mitra"),
+                ),
+              ],
+            ))
+          .animate(delay: 900.ms)
+          .fadeIn(duration: 600.ms)
+          .slideY(begin: .3),
 
         const SizedBox(height: 28),
 
         Wrap(
-          spacing: isMobile
-              ? 20
-              : isTablet
-                  ? 24
-                  : 36,
-          runSpacing: 18,
-          children: const [
-            HeroInfo(
-              icon: "⭐",
-              value: "4.9",
-              label: "Rating",
-            ),
-            HeroInfo(
-              icon: "✔",
-              value: "12rb+",
-              label: "Job Selesai",
-            ),
-            HeroInfo(
-              icon: "🎁",
-              value: "0%",
-              label: "Biaya Posting",
-            ),
-          ],
-        ),
+            spacing: isMobile ? 20 : isTablet ? 24 : 36,
+            runSpacing: 18,
+            children: const [
+              HeroInfo(
+                icon: "⭐",
+                value: "4.9",
+                label: "Rating",
+              ),
+              HeroInfo(
+                icon: "✔",
+                value: "12rb+",
+                label: "Job Selesai",
+              ),
+              HeroInfo(
+                icon: "🎁",
+                value: "0%",
+                label: "Biaya Posting",
+              ),
+            ],
+          )
+              .animate(delay: 1100.ms)
+              .fadeIn()
+              .slideY(begin: .2),
       ],
     );
   }
