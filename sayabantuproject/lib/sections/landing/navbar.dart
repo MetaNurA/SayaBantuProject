@@ -99,7 +99,7 @@ class CustomNavbar extends StatelessWidget {
                     const SizedBox(width: 12),
 
                     CustomButton(
-                      text: "Daftar Gratis",
+                      text: "Daftar",
                       width: isDesktop ? 160 : 145,
                       height: 48,
                       backgroundColor: AppColors.primary,
@@ -181,7 +181,7 @@ class CustomNavbar extends StatelessWidget {
                         ),
                         PopupMenuItem(
                           value: "register",
-                          child: Text("Daftar Gratis"),
+                          child: Text("Daftar"),
                         ),
                       ],
                     ).animate().fadeIn().scale(begin: const Offset(.8, .8)),

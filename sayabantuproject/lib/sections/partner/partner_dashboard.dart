@@ -9,164 +9,201 @@ class PartnerDashboard extends StatelessWidget {
   const PartnerDashboard({
     super.key,
     required this.onTakeOffer,
-    });
+  });
 
   @override
   Widget build(BuildContext context) {
-  
     final availableJobs = jobs.where((job) {
       return job.status == "Mencari Mitra";
     }).toList();
 
-    return Container(
-      color: Theme.of(context).scaffoldBackgroundColor,
-      padding: const EdgeInsets.all(30),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final width = constraints.maxWidth;
 
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+        final isMobile = width < 600;
+        final isTablet = width >= 600 && width < 1000;
 
-          const Text(
-            "Lowongan Tersedia",
-            style: TextStyle(
-              fontSize: 34,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+        final padding = isMobile
+            ? 16.0
+            : isTablet
+                ? 24.0
+                : 30.0;
 
-          const SizedBox(height: 8),
-
-          const Text(
-            "Temukan pekerjaan yang sesuai dengan keahlianmu.",
-            style: TextStyle(
-              color: Colors.grey,
-            ),
-          ),
-
-          const SizedBox(height: 30),
-
-          Row(
+        return Container(
+          color: Theme.of(context).scaffoldBackgroundColor,
+          padding: EdgeInsets.all(padding),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(
-                child: _statCard(
-                  Icons.work_outline,
-                  "Total Lowongan",
-                  jobs.length.toString(),
-                  Colors.blue,
+              Text(
+                "Lowongan Tersedia",
+                style: TextStyle(
+                  fontSize: isMobile ? 26 : 34,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
-              const SizedBox(width: 20),
-              Expanded(
-                child: _statCard(
-                  Icons.description_outlined,
-                  "Penawaran Aktif",
-                  "0",
-                  Colors.orange,
+
+              const SizedBox(height: 8),
+
+              Text(
+                "Temukan pekerjaan yang sesuai dengan keahlianmu.",
+                style: TextStyle(
+                  color: Theme.of(context)
+                      .textTheme
+                      .bodyMedium
+                      ?.color
+                      ?.withOpacity(0.6),
+                  fontSize: isMobile ? 14 : 16,
                 ),
               ),
-              const SizedBox(width: 20),
+
+              const SizedBox(height: 24),
+
+              // =========================
+              // STATISTIK
+              // =========================
+              GridView.count(
+                crossAxisCount: isMobile
+                    ? 1
+                    : isTablet
+                        ? 2
+                        : 3,
+                crossAxisSpacing: 16,
+                mainAxisSpacing: 16,
+                childAspectRatio: isMobile
+                    ? 3.8
+                    : isTablet
+                        ? 2.8
+                        : 2.4,
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                children: [
+                  _statCard(
+                    context,
+                    Icons.work_outline,
+                    "Total Lowongan",
+                    jobs.length.toString(),
+                    Colors.blue,
+                  ),
+
+                  _statCard(
+                    context,
+                    Icons.description_outlined,
+                    "Penawaran Aktif",
+                    "0",
+                    Colors.orange,
+                  ),
+
+                  _statCard(
+                    context,
+                    Icons.stars,
+                    "Total Poin",
+                    "120",
+                    Colors.green,
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 24),
+
+              // =========================
+              // DAFTAR LOWONGAN
+              // =========================
               Expanded(
-                child: _statCard(
-                  Icons.stars,
-                  "Total Poin",
-                  "120",
-                  Colors.green,
-                ),
+                child: availableJobs.isEmpty
+                    ? Center(
+                        child: Text(
+                          "Belum ada lowongan tersedia.",
+                          style: TextStyle(
+                            color: Theme.of(context)
+                                .textTheme
+                                .bodyMedium
+                                ?.color
+                                ?.withOpacity(0.6),
+                          ),
+                        ),
+                      )
+                    : ListView.separated(
+                        itemCount: availableJobs.length,
+                        separatorBuilder: (_, __) =>
+                            const SizedBox(height: 18),
+                        itemBuilder: (context, index) {
+                          final job = availableJobs[index];
+
+                          return PartnerJobCard(
+                            job: job,
+                            onTakeOffer: () {
+                              onTakeOffer(job);
+                            },
+                          );
+                        },
+                      ),
               ),
             ],
           ),
+        );
+      },
+    );
+  }
 
-          const SizedBox(height: 30),
+  Widget _statCard(
+    BuildContext context,
+    IconData icon,
+    String title,
+    String value,
+    Color color,
+  ) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Theme.of(context).cardColor,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(
+          color: Theme.of(context).dividerColor,
+        ),
+      ),
+      child: Row(
+        children: [
+          CircleAvatar(
+            radius: 24,
+            backgroundColor: color.withOpacity(0.15),
+            child: Icon(
+              icon,
+              color: color,
+            ),
+          ),
+
+          const SizedBox(width: 14),
 
           Expanded(
-            child: ListView.builder(
-              itemCount: availableJobs.length,
-              itemBuilder: (context, index) {
-                return PartnerJobCard(
-                  job: availableJobs[index],
-                  onTakeOffer: () {
-                    onTakeOffer(availableJobs[index]);
-                  },
-                );
-              },
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  value,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+
+                Text(
+                  title,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    color: Colors.grey,
+                  ),
+                ),
+              ],
             ),
           ),
         ],
       ),
     );
   }
-
-  Widget _chip(String text, [bool active = false]) {
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 18,
-        vertical: 10,
-      ),
-      decoration: BoxDecoration(
-        color: active
-            ? const Color(0xffF97316)
-            : Colors.white,
-        borderRadius: BorderRadius.circular(30),
-        border: Border.all(
-          color: const Color(0xffE5E7EB),
-        ),
-      ),
-      child: Text(
-        text,
-        style: TextStyle(
-          color: active
-              ? Colors.white
-              : Colors.black87,
-          fontWeight: FontWeight.w600,
-        ),
-      ),
-    );
-  }
-}
-
-Widget _statCard(
-  IconData icon,
-  String title,
-  String value,
-  Color color,
-) {
-  return Container(
-    padding: const EdgeInsets.all(20),
-    decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(18),
-      border: Border.all(color: const Color(0xffE5E7EB)),
-    ),
-    child: Row(
-      children: [
-        CircleAvatar(
-          radius: 24,
-          backgroundColor: color.withOpacity(0.15),
-          child: Icon(
-            icon,
-            color: color,
-          ),
-        ),
-        const SizedBox(width: 15),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              value,
-              style: const TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            Text(
-              title,
-              style: const TextStyle(
-                color: Colors.grey,
-              ),
-            ),
-          ],
-        ),
-      ],
-    ),
-  );
 }

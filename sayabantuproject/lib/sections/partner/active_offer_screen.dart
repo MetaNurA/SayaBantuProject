@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../data/job_data.dart';
 import '../../data/active_offer_data.dart';
 import '../../widgets/active_offer_card.dart';
 
@@ -9,43 +8,86 @@ class ActiveOfferScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final activeJobs = jobs.where((job) => job.offers.isNotEmpty).toList();
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isMobile = constraints.maxWidth < 600;
+        final isTablet = constraints.maxWidth >= 600 && constraints.maxWidth < 1000;
 
-    return Container(
-      color: const Color(0xffF8FAFC),
-      padding: const EdgeInsets.all(35),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            "Penawaran Aktif Saya",
-            style: TextStyle(
-              fontSize: 34,
-              fontWeight: FontWeight.bold,
-            ),
+        final padding = isMobile
+            ? 16.0
+            : isTablet
+                ? 24.0
+                : 35.0;
+
+        return Container(
+          color: Theme.of(context).scaffoldBackgroundColor,
+          padding: EdgeInsets.all(padding),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "Penawaran Aktif Saya",
+                style: TextStyle(
+                  fontSize: isMobile ? 27 : 34,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                "Seluruh pekerjaan yang sudah diberi penawaran.",
+                style: TextStyle(
+                  color: Theme.of(context)
+                      .textTheme
+                      .bodyMedium
+                      ?.color
+                      ?.withOpacity(0.6),
+                  fontSize: isMobile ? 14 : 16,
+                ),
+              ),
+              const SizedBox(height: 24),
+              Expanded(
+                child: activeOffers.isEmpty
+                    ? Center(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.assignment_outlined,
+                              size: 60,
+                              color: Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium
+                                  ?.color
+                                  ?.withOpacity(0.3),
+                            ),
+                            const SizedBox(height: 12),
+                            Text(
+                              "Belum ada penawaran aktif.",
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium
+                                    ?.color
+                                    ?.withOpacity(0.6),
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                    : ListView.builder(
+                        itemCount: activeOffers.length,
+                        itemBuilder: (context, index) {
+                          return ActiveOfferCard(
+                            offer: activeOffers[index],
+                          );
+                        },
+                      ),
+              ),
+            ],
           ),
-
-          const SizedBox(height: 8),
-
-          const Text(
-            "Seluruh pekerjaan yang sudah diberi penawaran.",
-            style: TextStyle(color: Colors.grey),
-          ),
-
-          const SizedBox(height: 35),
-
-          Expanded(
-            child: ListView.builder(
-              itemCount: activeOffers.length,
-              itemBuilder: (context, index) {
-                return ActiveOfferCard(
-                  offer: activeOffers[index],
-                );
-              },
-            ),
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 }
