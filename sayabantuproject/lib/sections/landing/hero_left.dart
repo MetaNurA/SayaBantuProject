@@ -30,7 +30,7 @@ class _HeroLeftState extends State<HeroLeft> {
 
  @override
   Widget build(BuildContext context) {
-    final width = Responsive.width(context);
+    // final width = Responsive.width(context);
 
     final isMobile = Responsive.isMobile(context);
     final isTablet = Responsive.isTablet(context);
