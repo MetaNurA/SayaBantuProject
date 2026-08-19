@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import '../../data/admin_activity_data.dart';
 
 class AdminModerationScreen extends StatefulWidget {
+  final ValueChanged<int>? onFlaggedCountChanged;
+
   const AdminModerationScreen({
     super.key,
+    this.onFlaggedCountChanged,
   });
 
   @override
@@ -43,6 +46,21 @@ class _AdminModerationScreenState
       'flagged': false,
     },
   ];
+
+  // =========================================================
+  // INIT
+  // =========================================================
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Sinkronkan jumlah postingan yang perlu diperiksa
+    // ketika halaman pertama kali dibuka.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _syncFlaggedCount();
+    });
+  }
 
   // =========================================================
   // BUILD
@@ -178,7 +196,10 @@ class _AdminModerationScreenState
       },
     ];
 
+    // =========================================================
     // MOBILE
+    // =========================================================
+
     if (isMobile) {
       return Column(
         children: statistics.map((item) {
@@ -197,11 +218,15 @@ class _AdminModerationScreenState
       );
     }
 
+    // =========================================================
     // TABLET
+    // =========================================================
+
     if (isTablet) {
       return GridView.builder(
         shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
+        physics:
+            const NeverScrollableScrollPhysics(),
         itemCount: statistics.length,
         gridDelegate:
             const SliverGridDelegateWithFixedCrossAxisCount(
@@ -223,7 +248,10 @@ class _AdminModerationScreenState
       );
     }
 
+    // =========================================================
     // DESKTOP
+    // =========================================================
+
     return Row(
       children: statistics.map((item) {
         final isLast = item == statistics.last;
@@ -292,7 +320,6 @@ class _AdminModerationScreenState
                   color: iconColor,
                 ),
               ),
-
               Text(
                 title,
                 style: const TextStyle(
@@ -432,11 +459,14 @@ class _AdminModerationScreenState
       ),
       child: Row(
         children: [
+          // =================================================
           // JUDUL
+          // =================================================
+
           Expanded(
             flex: 4,
             child: Text(
-              post['title'],
+              post['title'] as String,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
               style: const TextStyle(
@@ -447,11 +477,14 @@ class _AdminModerationScreenState
             ),
           ),
 
+          // =================================================
           // PENGGUNA
+          // =================================================
+
           Expanded(
             flex: 2,
             child: Text(
-              post['user'],
+              post['user'] as String,
               overflow: TextOverflow.ellipsis,
               style: const TextStyle(
                 fontSize: 11,
@@ -460,11 +493,14 @@ class _AdminModerationScreenState
             ),
           ),
 
+          // =================================================
           // WAKTU
+          // =================================================
+
           Expanded(
             flex: 2,
             child: Text(
-              post['time'],
+              post['time'] as String,
               overflow: TextOverflow.ellipsis,
               style: const TextStyle(
                 fontSize: 11,
@@ -473,7 +509,10 @@ class _AdminModerationScreenState
             ),
           ),
 
+          // =================================================
           // STATUS
+          // =================================================
+
           Expanded(
             flex: 2,
             child: Align(
@@ -482,7 +521,10 @@ class _AdminModerationScreenState
             ),
           ),
 
+          // =================================================
           // AKSI
+          // =================================================
+
           SizedBox(
             width: 275,
             child: _desktopActions(
@@ -577,9 +619,12 @@ class _AdminModerationScreenState
         crossAxisAlignment:
             CrossAxisAlignment.start,
         children: [
+          // =================================================
           // TITLE
+          // =================================================
+
           Text(
-            post['title'],
+            post['title'] as String,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
             style: const TextStyle(
@@ -591,25 +636,34 @@ class _AdminModerationScreenState
 
           const SizedBox(height: 12),
 
+          // =================================================
           // USER
+          // =================================================
+
           _infoRow(
             Icons.person_outline,
             'Pengguna',
-            post['user'],
+            post['user'] as String,
           ),
 
           const SizedBox(height: 8),
 
+          // =================================================
           // TIME
+          // =================================================
+
           _infoRow(
             Icons.access_time,
             'Waktu',
-            post['time'],
+            post['time'] as String,
           ),
 
           const SizedBox(height: 10),
 
+          // =================================================
           // STATUS
+          // =================================================
+
           Row(
             children: [
               const Icon(
@@ -643,7 +697,10 @@ class _AdminModerationScreenState
 
           const SizedBox(height: 13),
 
+          // =================================================
           // ACTION
+          // =================================================
+
           Wrap(
             spacing: 7,
             runSpacing: 7,
@@ -772,16 +829,22 @@ class _AdminModerationScreenState
         ),
       ),
       style: ElevatedButton.styleFrom(
-        backgroundColor: const Color(0xFFEDE9FE),
-        foregroundColor: const Color(0xFF7C3AED),
+        backgroundColor:
+            const Color(0xFFEDE9FE),
+        foregroundColor:
+            const Color(0xFF7C3AED),
         elevation: 0,
-        padding: const EdgeInsets.symmetric(
+        padding:
+            const EdgeInsets.symmetric(
           horizontal: 12,
           vertical: 9,
         ),
-        minimumSize: const Size(0, 34),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(7),
+        minimumSize:
+            const Size(0, 34),
+        shape:
+            RoundedRectangleBorder(
+          borderRadius:
+              BorderRadius.circular(7),
         ),
       ),
     );
@@ -797,17 +860,9 @@ class _AdminModerationScreenState
   ) {
     return ElevatedButton.icon(
       onPressed: () {
-        setState(() {
-          post['flagged'] = false;
-        });
-
-        // MASUK KE DATA AKTIVITAS ADMIN
-        AdminActivityData.addModeratedPost();
-
-        _showMessage(
+        _confirmSafePost(
           context,
-          'Postingan ditandai sebagai aman.',
-          const Color(0xFF10B981),
+          post,
         );
       },
       icon: const Icon(
@@ -821,18 +876,111 @@ class _AdminModerationScreenState
         ),
       ),
       style: ElevatedButton.styleFrom(
-        backgroundColor: const Color(0xFF10B981),
+        backgroundColor:
+            const Color(0xFF10B981),
         foregroundColor: Colors.white,
         elevation: 0,
-        padding: const EdgeInsets.symmetric(
+        padding:
+            const EdgeInsets.symmetric(
           horizontal: 12,
           vertical: 9,
         ),
-        minimumSize: const Size(0, 34),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(7),
+        minimumSize:
+            const Size(0, 34),
+        shape:
+            RoundedRectangleBorder(
+          borderRadius:
+              BorderRadius.circular(7),
         ),
       ),
+    );
+  }
+
+  // =========================================================
+  // CONFIRM SAFE
+  // =========================================================
+
+  void _confirmSafePost(
+    BuildContext context,
+    Map<String, dynamic> post,
+  ) {
+    showDialog(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          title: const Text(
+            'Konfirmasi Moderasi',
+          ),
+          content: const Text(
+            'Apakah kamu yakin postingan ini aman dan dapat ditampilkan kepada pengguna?',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(
+                  dialogContext,
+                );
+              },
+              child: const Text(
+                'Batal',
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(
+                  dialogContext,
+                );
+
+                _markPostAsSafe(
+                  context,
+                  post,
+                );
+              },
+              style:
+                  ElevatedButton.styleFrom(
+                backgroundColor:
+                    const Color(
+                  0xFF10B981,
+                ),
+                foregroundColor:
+                    Colors.white,
+              ),
+              child: const Text(
+                'Ya, Aman',
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  // =========================================================
+  // MARK SAFE
+  // =========================================================
+
+  void _markPostAsSafe(
+    BuildContext context,
+    Map<String, dynamic> post,
+  ) {
+    if (post['flagged'] != true) {
+      return;
+    }
+
+    setState(() {
+      post['flagged'] = false;
+    });
+
+    // Sinkronkan badge Moderasi Konten
+    _syncFlaggedCount();
+
+    // Catat aktivitas admin
+    AdminActivityData.addModeratedPost();
+
+    _showMessage(
+      context,
+      'Postingan ditandai sebagai aman.',
+      const Color(0xFF10B981),
     );
   }
 
@@ -846,17 +994,9 @@ class _AdminModerationScreenState
   ) {
     return OutlinedButton.icon(
       onPressed: () {
-        setState(() {
-          posts.remove(post);
-        });
-
-        // MASUK KE DATA AKTIVITAS ADMIN
-        AdminActivityData.addRejectedPost();
-
-        _showMessage(
+        _confirmDeletePost(
           context,
-          'Postingan berhasil dihapus.',
-          const Color(0xFFEF4444),
+          post,
         );
       },
       icon: const Icon(
@@ -870,19 +1010,114 @@ class _AdminModerationScreenState
         ),
       ),
       style: OutlinedButton.styleFrom(
-        foregroundColor: const Color(0xFFEF4444),
+        foregroundColor:
+            const Color(0xFFEF4444),
         side: const BorderSide(
           color: Color(0xFFFCA5A5),
         ),
-        padding: const EdgeInsets.symmetric(
+        padding:
+            const EdgeInsets.symmetric(
           horizontal: 12,
           vertical: 9,
         ),
-        minimumSize: const Size(0, 34),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(7),
+        minimumSize:
+            const Size(0, 34),
+        shape:
+            RoundedRectangleBorder(
+          borderRadius:
+              BorderRadius.circular(7),
         ),
       ),
+    );
+  }
+
+  // =========================================================
+  // CONFIRM DELETE
+  // =========================================================
+
+  void _confirmDeletePost(
+    BuildContext context,
+    Map<String, dynamic> post,
+  ) {
+    showDialog(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          title: const Text(
+            'Hapus Postingan',
+          ),
+          content: const Text(
+            'Apakah kamu yakin ingin menghapus postingan ini? Tindakan ini tidak dapat dibatalkan.',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(
+                  dialogContext,
+                );
+              },
+              child: const Text(
+                'Batal',
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(
+                  dialogContext,
+                );
+
+                _deletePost(
+                  context,
+                  post,
+                );
+              },
+              style:
+                  ElevatedButton.styleFrom(
+                backgroundColor:
+                    const Color(
+                  0xFFEF4444,
+                ),
+                foregroundColor:
+                    Colors.white,
+              ),
+              child: const Text(
+                'Hapus',
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  // =========================================================
+  // DELETE POST
+  // =========================================================
+
+  void _deletePost(
+    BuildContext context,
+    Map<String, dynamic> post,
+  ) {
+    final bool wasFlagged =
+        post['flagged'] == true;
+
+    setState(() {
+      posts.remove(post);
+    });
+
+    // Hanya postingan yang ditandai yang
+    // mengurangi badge "Perlu Ditinjau".
+    if (wasFlagged) {
+      _syncFlaggedCount();
+    }
+
+    // Catat konten ditolak
+    AdminActivityData.addRejectedPost();
+
+    _showMessage(
+      context,
+      'Postingan berhasil dihapus.',
+      const Color(0xFFEF4444),
     );
   }
 
@@ -897,16 +1132,21 @@ class _AdminModerationScreenState
     showDialog(
       context: context,
       builder: (dialogContext) {
+        final bool flagged =
+            post['flagged'] == true;
+
         return AlertDialog(
           title: Text(
-            post['title'],
+            post['title'] as String,
             style: const TextStyle(
               fontSize: 18,
-              fontWeight: FontWeight.w700,
+              fontWeight:
+                  FontWeight.w700,
             ),
           ),
           content: Column(
-            mainAxisSize: MainAxisSize.min,
+            mainAxisSize:
+                MainAxisSize.min,
             crossAxisAlignment:
                 CrossAxisAlignment.start,
             children: [
@@ -924,7 +1164,7 @@ class _AdminModerationScreenState
 
               Text(
                 'Status: '
-                '${post['flagged'] ? 'Ditandai' : 'Aman'}',
+                '${flagged ? 'Ditandai' : 'Aman'}',
               ),
 
               const SizedBox(height: 16),
@@ -932,7 +1172,8 @@ class _AdminModerationScreenState
               const Text(
                 'Detail postingan dapat diperiksa oleh admin sebelum menentukan tindakan moderasi.',
                 style: TextStyle(
-                  color: Color(0xFF64748B),
+                  color:
+                      Color(0xFF64748B),
                 ),
               ),
             ],
@@ -940,7 +1181,9 @@ class _AdminModerationScreenState
           actions: [
             TextButton(
               onPressed: () {
-                Navigator.pop(dialogContext);
+                Navigator.pop(
+                  dialogContext,
+                );
               },
               child: const Text(
                 'Tutup',
@@ -959,15 +1202,18 @@ class _AdminModerationScreenState
   Widget _emptyState() {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(
+      padding:
+          const EdgeInsets.symmetric(
         vertical: 50,
         horizontal: 20,
       ),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(9),
+        borderRadius:
+            BorderRadius.circular(9),
         border: Border.all(
-          color: const Color(0xFFDCE3EC),
+          color:
+              const Color(0xFFDCE3EC),
         ),
       ),
       child: const Column(
@@ -975,18 +1221,22 @@ class _AdminModerationScreenState
           Icon(
             Icons.check_circle_outline,
             size: 42,
-            color: Color(0xFF10B981),
+            color:
+                Color(0xFF10B981),
           ),
 
           SizedBox(height: 10),
 
           Text(
             'Tidak ada postingan yang perlu diperiksa',
-            textAlign: TextAlign.center,
+            textAlign:
+                TextAlign.center,
             style: TextStyle(
-              color: Color(0xFF334155),
+              color:
+                  Color(0xFF334155),
               fontSize: 14,
-              fontWeight: FontWeight.w600,
+              fontWeight:
+                  FontWeight.w600,
             ),
           ),
         ],
@@ -1001,7 +1251,8 @@ class _AdminModerationScreenState
   int _flaggedCount() {
     return posts
         .where(
-          (post) => post['flagged'] == true,
+          (post) =>
+              post['flagged'] == true,
         )
         .length;
   }
@@ -1009,9 +1260,26 @@ class _AdminModerationScreenState
   int _safeCount() {
     return posts
         .where(
-          (post) => post['flagged'] == false,
+          (post) =>
+              post['flagged'] == false,
         )
         .length;
+  }
+
+  int _totalPostCount() {
+    return posts.length;
+  }
+
+  // =========================================================
+  // SYNC FLAGGED COUNT
+  // =========================================================
+
+  void _syncFlaggedCount() {
+    final count = _flaggedCount();
+
+    widget.onFlaggedCountChanged?.call(
+      count,
+    );
   }
 
   // =========================================================
@@ -1026,13 +1294,17 @@ class _AdminModerationScreenState
     ScaffoldMessenger.of(context)
         .hideCurrentSnackBar();
 
-    ScaffoldMessenger.of(context).showSnackBar(
+    ScaffoldMessenger.of(context)
+        .showSnackBar(
       SnackBar(
         content: Text(message),
         backgroundColor:
-            color ?? const Color(0xFF7C3AED),
-        behavior: SnackBarBehavior.floating,
-        margin: const EdgeInsets.all(16),
+            color ??
+                const Color(0xFF7C3AED),
+        behavior:
+            SnackBarBehavior.floating,
+        margin:
+            const EdgeInsets.all(16),
       ),
     );
   }

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import '../../data/admin_activity_data.dart';
 
@@ -13,18 +15,109 @@ class AdminDailyReportScreen extends StatefulWidget {
 
 class _AdminDailyReportScreenState
     extends State<AdminDailyReportScreen> {
+  // =========================================================
+  // DATA TERAKHIR
+  // =========================================================
+
+  int _approvedPartners = 0;
+  int _moderatedPosts = 0;
+  int _rejectedPosts = 0;
+  int _userReports = 0;
+
+  List<dynamic> _activities = [];
+
+  Timer? _syncTimer;
+
+  // =========================================================
+  // INIT
+  // =========================================================
+
   @override
   void initState() {
     super.initState();
 
-    // Supaya halaman ikut diperbarui ketika kembali
-    // dari halaman admin lainnya.
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) {
-        setState(() {});
-      }
+    _syncData();
+
+    // -------------------------------------------------------
+    // Sinkronisasi otomatis
+    // -------------------------------------------------------
+    //
+    // Halaman dashboard biasanya menggunakan IndexedStack,
+    // sehingga initState() tidak dipanggil lagi ketika user
+    // pindah halaman.
+    //
+    // Timer ini mengecek AdminActivityData secara berkala.
+    // Kalau ada perubahan, halaman langsung diperbarui.
+    //
+    _syncTimer = Timer.periodic(
+      const Duration(milliseconds: 500),
+      (_) {
+        if (mounted) {
+          _syncData();
+        }
+      },
+    );
+  }
+
+  // =========================================================
+  // DISPOSE
+  // =========================================================
+
+  @override
+  void dispose() {
+    _syncTimer?.cancel();
+    super.dispose();
+  }
+
+  // =========================================================
+  // SYNC DATA
+  // =========================================================
+
+  void _syncData() {
+    final newApprovedPartners =
+        AdminActivityData.approvedPartners;
+
+    final newModeratedPosts =
+        AdminActivityData.moderatedPosts;
+
+    final newRejectedPosts =
+        AdminActivityData.rejectedPosts;
+
+    final newUserReports =
+        AdminActivityData.userReports;
+
+    final newActivities =
+        List<dynamic>.from(
+      AdminActivityData.activities,
+    );
+
+    final dataChanged =
+        _approvedPartners != newApprovedPartners ||
+        _moderatedPosts != newModeratedPosts ||
+        _rejectedPosts != newRejectedPosts ||
+        _userReports != newUserReports ||
+        _activities.length != newActivities.length;
+
+    if (!dataChanged) {
+      return;
+    }
+
+    if (!mounted) {
+      return;
+    }
+
+    setState(() {
+      _approvedPartners = newApprovedPartners;
+      _moderatedPosts = newModeratedPosts;
+      _rejectedPosts = newRejectedPosts;
+      _userReports = newUserReports;
+      _activities = newActivities;
     });
   }
+
+  // =========================================================
+  // BUILD
+  // =========================================================
 
   @override
   Widget build(BuildContext context) {
@@ -33,8 +126,10 @@ class _AdminDailyReportScreenState
         final screenWidth = constraints.maxWidth;
 
         final isMobile = screenWidth < 700;
+
         final isTablet =
-            screenWidth >= 700 && screenWidth < 1100;
+            screenWidth >= 700 &&
+            screenWidth < 1100;
 
         return _buildContent(
           context,
@@ -66,7 +161,8 @@ class _AdminDailyReportScreenState
           30,
         ),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment:
+              CrossAxisAlignment.start,
           children: [
             // =================================================
             // TITLE
@@ -130,28 +226,28 @@ class _AdminDailyReportScreenState
     final statistics = [
       {
         'title': 'Mitra berhasil diverifikasi',
-        'value': AdminActivityData.approvedPartners.toString(),
+        'value': _approvedPartners.toString(),
         'description': 'Mitra disetujui hari ini',
         'icon': Icons.verified_outlined,
         'color': const Color(0xFF10B981),
       },
       {
         'title': 'Konten dimoderasi',
-        'value': AdminActivityData.moderatedPosts.toString(),
+        'value': _moderatedPosts.toString(),
         'description': 'Postingan diperiksa hari ini',
         'icon': Icons.flag_outlined,
         'color': const Color(0xFF8B5CF6),
       },
       {
         'title': 'Konten ditolak',
-        'value': AdminActivityData.rejectedPosts.toString(),
+        'value': _rejectedPosts.toString(),
         'description': 'Postingan ditolak hari ini',
         'icon': Icons.cancel_outlined,
         'color': const Color(0xFFEF4444),
       },
       {
         'title': 'Laporan pengguna',
-        'value': AdminActivityData.userReports.toString(),
+        'value': _userReports.toString(),
         'description': 'Laporan masuk hari ini',
         'icon': Icons.report_problem_outlined,
         'color': const Color(0xFFF59E0B),
@@ -166,9 +262,8 @@ class _AdminDailyReportScreenState
       return Column(
         children: statistics.map((item) {
           return Padding(
-            padding: const EdgeInsets.only(
-              bottom: 10,
-            ),
+            padding:
+                const EdgeInsets.only(bottom: 10),
             child: _statCard(
               item,
               compact: true,
@@ -185,7 +280,8 @@ class _AdminDailyReportScreenState
     if (isTablet) {
       return GridView.builder(
         shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
+        physics:
+            const NeverScrollableScrollPhysics(),
         itemCount: statistics.length,
         gridDelegate:
             const SliverGridDelegateWithFixedCrossAxisCount(
@@ -211,7 +307,8 @@ class _AdminDailyReportScreenState
         return Expanded(
           child: Padding(
             padding: EdgeInsets.only(
-              right: item == statistics.last ? 0 : 10,
+              right:
+                  item == statistics.last ? 0 : 10,
             ),
             child: _statCard(item),
           ),
@@ -228,7 +325,8 @@ class _AdminDailyReportScreenState
     Map<String, dynamic> item, {
     bool compact = false,
   }) {
-    final Color color = item['color'] as Color;
+    final Color color =
+        item['color'] as Color;
 
     return Container(
       width: double.infinity,
@@ -240,7 +338,8 @@ class _AdminDailyReportScreenState
       ),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(9),
+        borderRadius:
+            BorderRadius.circular(9),
         border: Border.all(
           color: const Color(0xFFE2E8F0),
         ),
@@ -254,7 +353,8 @@ class _AdminDailyReportScreenState
               color: color.withValues(
                 alpha: 0.10,
               ),
-              borderRadius: BorderRadius.circular(9),
+              borderRadius:
+                  BorderRadius.circular(9),
             ),
             child: Icon(
               item['icon'] as IconData,
@@ -275,8 +375,10 @@ class _AdminDailyReportScreenState
                 Text(
                   item['value'] as String,
                   style: TextStyle(
-                    fontSize: compact ? 20 : 21,
-                    fontWeight: FontWeight.w700,
+                    fontSize:
+                        compact ? 20 : 21,
+                    fontWeight:
+                        FontWeight.w700,
                     color: color,
                   ),
                 ),
@@ -286,23 +388,30 @@ class _AdminDailyReportScreenState
                 Text(
                   item['title'] as String,
                   maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
+                  overflow:
+                      TextOverflow.ellipsis,
                   style: TextStyle(
-                    fontSize: compact ? 10 : 11,
-                    fontWeight: FontWeight.w600,
-                    color: const Color(0xFF334155),
+                    fontSize:
+                        compact ? 10 : 11,
+                    fontWeight:
+                        FontWeight.w600,
+                    color:
+                        const Color(0xFF334155),
                   ),
                 ),
 
                 const SizedBox(height: 2),
 
                 Text(
-                  item['description'] as String,
+                  item['description']
+                      as String,
                   maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
+                  overflow:
+                      TextOverflow.ellipsis,
                   style: const TextStyle(
                     fontSize: 9,
-                    color: Color(0xFF94A3B8),
+                    color:
+                        Color(0xFF94A3B8),
                   ),
                 ),
               ],
@@ -318,13 +427,12 @@ class _AdminDailyReportScreenState
   // =========================================================
 
   Widget _buildActivitySection() {
-    final activities = AdminActivityData.activities;
-
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(9),
+        borderRadius:
+            BorderRadius.circular(9),
         border: Border.all(
           color: const Color(0xFFDCE3EC),
         ),
@@ -339,8 +447,10 @@ class _AdminDailyReportScreenState
               'Aktivitas Hari Ini',
               style: TextStyle(
                 fontSize: 14,
-                fontWeight: FontWeight.w700,
-                color: Color(0xFF0F172A),
+                fontWeight:
+                    FontWeight.w700,
+                color:
+                    Color(0xFF0F172A),
               ),
             ),
           ),
@@ -351,12 +461,13 @@ class _AdminDailyReportScreenState
           ),
 
           // =================================================
-          // BELUM ADA AKTIVITAS
+          // EMPTY
           // =================================================
 
-          if (activities.isEmpty)
+          if (_activities.isEmpty)
             const Padding(
-              padding: EdgeInsets.symmetric(
+              padding:
+                  EdgeInsets.symmetric(
                 vertical: 35,
                 horizontal: 20,
               ),
@@ -366,17 +477,20 @@ class _AdminDailyReportScreenState
                     Icon(
                       Icons.history_outlined,
                       size: 35,
-                      color: Color(0xFFCBD5E1),
+                      color:
+                          Color(0xFFCBD5E1),
                     ),
 
                     SizedBox(height: 10),
 
                     Text(
                       'Belum ada aktivitas hari ini.',
-                      textAlign: TextAlign.center,
+                      textAlign:
+                          TextAlign.center,
                       style: TextStyle(
                         fontSize: 12,
-                        color: Color(0xFF94A3B8),
+                        color:
+                            Color(0xFF94A3B8),
                       ),
                     ),
                   ],
@@ -385,20 +499,25 @@ class _AdminDailyReportScreenState
             )
 
           // =================================================
-          // DAFTAR AKTIVITAS
+          // ACTIVITY LIST
           // =================================================
 
           else
-            ...activities.map(
+            ..._activities.map(
               (activity) {
+                final map =
+                    activity
+                        as Map<String, dynamic>;
+
                 return _activityItem(
                   _getIcon(
-                    activity['icon'] as String,
+                    map['icon'] as String,
                   ),
-                  activity['title'] as String,
-                  activity['time'] as String,
+                  map['title'] as String,
+                  map['time'] as String,
                   _getColor(
-                    activity['colorType'] as String,
+                    map['colorType']
+                        as String,
                   ),
                 );
               },
@@ -420,14 +539,17 @@ class _AdminDailyReportScreenState
   ) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(
+      padding:
+          const EdgeInsets.symmetric(
         horizontal: 17,
         vertical: 14,
       ),
-      decoration: const BoxDecoration(
+      decoration:
+          const BoxDecoration(
         border: Border(
           top: BorderSide(
-            color: Color(0xFFE2E8F0),
+            color:
+                Color(0xFFE2E8F0),
           ),
         ),
       ),
@@ -455,11 +577,14 @@ class _AdminDailyReportScreenState
             child: Text(
               title,
               maxLines: 2,
-              overflow: TextOverflow.ellipsis,
+              overflow:
+                  TextOverflow.ellipsis,
               style: const TextStyle(
                 fontSize: 12,
-                fontWeight: FontWeight.w500,
-                color: Color(0xFF334155),
+                fontWeight:
+                    FontWeight.w500,
+                color:
+                    Color(0xFF334155),
               ),
             ),
           ),
@@ -470,7 +595,8 @@ class _AdminDailyReportScreenState
             time,
             style: const TextStyle(
               fontSize: 10,
-              color: Color(0xFF94A3B8),
+              color:
+                  Color(0xFF94A3B8),
             ),
           ),
         ],

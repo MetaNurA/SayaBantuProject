@@ -1,114 +1,135 @@
-class AdminActivityData {
+import 'package:flutter/foundation.dart';
+
+class AdminActivityData extends ChangeNotifier {
+  AdminActivityData._();
+
+  static final AdminActivityData instance = AdminActivityData._();
+
   // =========================================================
-  // STATISTIK
+  // LAPORAN HARIAN
   // =========================================================
 
   static int approvedPartners = 0;
-  static int rejectedPartners = 0;
-
   static int moderatedPosts = 0;
   static int rejectedPosts = 0;
-
   static int userReports = 0;
-  static int handledReports = 0;
 
   // =========================================================
-  // DAFTAR AKTIVITAS
+  // BADGE SIDEBAR
+  // =========================================================
+
+  static int pendingPartners = 0;
+  static int flaggedPosts = 0;
+
+  // =========================================================
+  // AKTIVITAS HARI INI
   // =========================================================
 
   static final List<Map<String, dynamic>> activities = [];
 
   // =========================================================
-  // MITRA DISETUJUI
+  // VERIFIKASI MITRA
   // =========================================================
 
-  static void addApprovedPartner() {
+  static void addApprovedPartner({
+    String? name,
+  }) {
     approvedPartners++;
 
-    addActivity(
+    if (pendingPartners > 0) {
+      pendingPartners--;
+    }
+
+    _addActivity(
+      title: name == null
+          ? 'Mitra berhasil diverifikasi'
+          : 'Mitra $name berhasil diverifikasi',
       icon: 'verified',
-      title: '1 mitra berhasil diverifikasi',
       colorType: 'green',
     );
   }
 
   // =========================================================
-  // MITRA DITOLAK
+  // MODERASI - POSTINGAN AMAN
   // =========================================================
 
-  static void addRejectedPartner() {
-    rejectedPartners++;
-
-    addActivity(
-      icon: 'cancel',
-      title: '1 mitra ditolak',
-      colorType: 'red',
-    );
-  }
-
-  // =========================================================
-  // KONTEN DIMODERASI
-  // =========================================================
-
-  static void addModeratedPost() {
+  static void addModeratedPost({
+    String? title,
+  }) {
     moderatedPosts++;
 
-    addActivity(
+    _addActivity(
+      title: title == null
+          ? 'Postingan selesai dimoderasi'
+          : 'Postingan "$title" selesai dimoderasi',
       icon: 'flag',
-      title: '1 postingan telah dimoderasi',
       colorType: 'purple',
     );
   }
 
   // =========================================================
-  // KONTEN DITOLAK
+  // MODERASI - POSTINGAN DITOLAK
   // =========================================================
 
-  static void addRejectedPost() {
+  static void addRejectedPost({
+    String? title,
+  }) {
     rejectedPosts++;
 
-    addActivity(
+    _addActivity(
+      title: title == null
+          ? 'Postingan ditolak'
+          : 'Postingan "$title" ditolak',
       icon: 'cancel',
-      title: '1 postingan ditolak',
       colorType: 'red',
     );
   }
 
   // =========================================================
-  // LAPORAN PENGGUNA MASUK
+  // LAPORAN PENGGUNA
   // =========================================================
 
-  static void addUserReport() {
+  static void addUserReport({
+    String? title,
+  }) {
     userReports++;
 
-    addActivity(
+    _addActivity(
+      title: title == null
+          ? 'Laporan pengguna diterima'
+          : 'Laporan pengguna "$title" diterima',
       icon: 'report',
-      title: '1 laporan pengguna diterima',
       colorType: 'orange',
     );
   }
 
   // =========================================================
-  // LAPORAN DITANGANI
+  // UPDATE BADGE MODERASI
   // =========================================================
 
-  static void addHandledReport() {
-    handledReports++;
+  static void setFlaggedCount(int count) {
+    flaggedPosts = count < 0 ? 0 : count;
 
-    addActivity(
-      icon: 'check',
-      title: '1 laporan pengguna ditangani',
-      colorType: 'green',
-    );
+    instance.notifyListeners();
+  }
+
+  // =========================================================
+  // UPDATE BADGE VERIFIKASI
+  // =========================================================
+
+  static void setPendingPartnerCount(int count) {
+    pendingPartners = count < 0 ? 0 : count;
+
+    instance.notifyListeners();
   }
 
   // =========================================================
   // TAMBAH AKTIVITAS
   // =========================================================
 
-  static void addActivity({
-    required String icon,
+  static void _addActivity({
     required String title,
+    required String icon,
     required String colorType,
   }) {
     final now = DateTime.now();
@@ -116,13 +137,40 @@ class AdminActivityData {
     activities.insert(
       0,
       {
-        'icon': icon,
         'title': title,
-        'time':
-            '${now.hour.toString().padLeft(2, '0')}:'
-            '${now.minute.toString().padLeft(2, '0')}',
+        'icon': icon,
         'colorType': colorType,
+        'time': _formatTime(now),
+        'date': now,
       },
     );
+
+    instance.notifyListeners();
+  }
+
+  // =========================================================
+  // FORMAT JAM
+  // =========================================================
+
+  static String _formatTime(DateTime time) {
+    final hour = time.hour.toString().padLeft(2, '0');
+    final minute = time.minute.toString().padLeft(2, '0');
+
+    return '$hour:$minute';
+  }
+
+  // =========================================================
+  // RESET DATA
+  // =========================================================
+
+  static void resetToday() {
+    approvedPartners = 0;
+    moderatedPosts = 0;
+    rejectedPosts = 0;
+    userReports = 0;
+
+    activities.clear();
+
+    instance.notifyListeners();
   }
 }
