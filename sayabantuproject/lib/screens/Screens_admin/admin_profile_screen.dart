@@ -2,7 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AdminProfileScreen extends StatefulWidget {
-  const AdminProfileScreen({super.key});
+  final VoidCallback? onProfileUpdated;
+
+  const AdminProfileScreen({
+    super.key,
+    this.onProfileUpdated,
+  });
 
   @override
   State<AdminProfileScreen> createState() =>
@@ -11,26 +16,9 @@ class AdminProfileScreen extends StatefulWidget {
 
 class _AdminProfileScreenState
     extends State<AdminProfileScreen> {
-  // =========================================================
-  // SHARED PREFERENCES KEY
-  // =========================================================
-
-  static const String _nameKey = 'admin_name';
-  static const String _emailKey = 'admin_email';
-  static const String _passwordKey = 'admin_password';
-
-  // =========================================================
-  // DATA PROFIL
-  // =========================================================
-
   String adminName = 'Admin Operator';
   String adminEmail = 'admin@sayabantu.com';
-
-  bool _isLoading = true;
-
-  // =========================================================
-  // INIT
-  // =========================================================
+  String adminRole = 'Admin Harian';
 
   @override
   void initState() {
@@ -43,82 +31,23 @@ class _AdminProfileScreenState
   // =========================================================
 
   Future<void> _loadAdminProfile() async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-
-      final savedName = prefs.getString(_nameKey);
-      final savedEmail = prefs.getString(_emailKey);
-
-      // Jika belum ada password, buat password awal.
-      if (!prefs.containsKey(_passwordKey)) {
-        await prefs.setString(
-          _passwordKey,
-          'admin123',
-        );
-      }
-
-      if (!mounted) return;
-
-      setState(() {
-        adminName = savedName?.trim().isNotEmpty == true
-            ? savedName!
-            : 'Admin Operator';
-
-        adminEmail = savedEmail?.trim().isNotEmpty == true
-            ? savedEmail!
-            : 'admin@sayabantu.com';
-
-        _isLoading = false;
-      });
-
-      // Simpan default jika belum ada.
-      if (savedName == null) {
-        await prefs.setString(
-          _nameKey,
-          adminName,
-        );
-      }
-
-      if (savedEmail == null) {
-        await prefs.setString(
-          _emailKey,
-          adminEmail,
-        );
-      }
-    } catch (e) {
-      if (!mounted) return;
-
-      setState(() {
-        _isLoading = false;
-      });
-    }
-  }
-
-  // =========================================================
-  // SAVE PROFILE
-  // =========================================================
-
-  Future<void> _saveAdminProfile({
-    required String name,
-    required String email,
-  }) async {
-    final prefs = await SharedPreferences.getInstance();
-
-    await prefs.setString(
-      _nameKey,
-      name,
-    );
-
-    await prefs.setString(
-      _emailKey,
-      email,
-    );
+    final prefs =
+        await SharedPreferences.getInstance();
 
     if (!mounted) return;
 
     setState(() {
-      adminName = name;
-      adminEmail = email;
+      adminName =
+          prefs.getString('name') ??
+              'Admin Operator';
+
+      adminEmail =
+          prefs.getString('email') ??
+              'admin@sayabantu.com';
+
+      adminRole =
+          prefs.getString('role') ??
+              'Admin Harian';
     });
   }
 
@@ -128,27 +57,17 @@ class _AdminProfileScreenState
 
   @override
   Widget build(BuildContext context) {
-    if (_isLoading) {
-      return Container(
-        width: double.infinity,
-        height: double.infinity,
-        color: const Color(0xFFF4F7FB),
-        child: const Center(
-          child: CircularProgressIndicator(
-            color: Color(0xFF7C3AED),
-          ),
-        ),
-      );
-    }
-
     return LayoutBuilder(
       builder: (context, constraints) {
-        final screenWidth = constraints.maxWidth;
+        final screenWidth =
+            constraints.maxWidth;
 
-        final isMobile = screenWidth < 700;
+        final isMobile =
+            screenWidth < 700;
 
         final isTablet =
-            screenWidth >= 700 && screenWidth < 1100;
+            screenWidth >= 700 &&
+                screenWidth < 1100;
 
         return _buildContent(
           context,
@@ -183,16 +102,15 @@ class _AdminProfileScreenState
           crossAxisAlignment:
               CrossAxisAlignment.start,
           children: [
-            // =================================================
-            // TITLE
-            // =================================================
-
             Text(
               'Profil Admin',
               style: TextStyle(
-                fontSize: isMobile ? 23 : 27,
-                fontWeight: FontWeight.w700,
-                color: const Color(0xFF0F172A),
+                fontSize:
+                    isMobile ? 23 : 27,
+                fontWeight:
+                    FontWeight.w700,
+                color:
+                    const Color(0xFF0F172A),
               ),
             ),
 
@@ -201,16 +119,14 @@ class _AdminProfileScreenState
             Text(
               'Kelola informasi dan keamanan akun admin',
               style: TextStyle(
-                fontSize: isMobile ? 12 : 13,
-                color: const Color(0xFF64748B),
+                fontSize:
+                    isMobile ? 12 : 13,
+                color:
+                    const Color(0xFF64748B),
               ),
             ),
 
             const SizedBox(height: 22),
-
-            // =================================================
-            // PROFILE CARD
-            // =================================================
 
             _buildProfileCard(
               context,
@@ -219,19 +135,11 @@ class _AdminProfileScreenState
 
             const SizedBox(height: 18),
 
-            // =================================================
-            // ACCOUNT CARD
-            // =================================================
-
             _buildAccountCard(
               isMobile,
             ),
 
             const SizedBox(height: 18),
-
-            // =================================================
-            // SECURITY CARD
-            // =================================================
 
             _buildSecurityCard(
               context,
@@ -258,9 +166,11 @@ class _AdminProfileScreenState
       ),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(9),
+        borderRadius:
+            BorderRadius.circular(9),
         border: Border.all(
-          color: const Color(0xFFDCE3EC),
+          color:
+              const Color(0xFFDCE3EC),
         ),
       ),
       child: isMobile
@@ -270,7 +180,9 @@ class _AdminProfileScreenState
               children: [
                 _profileInfo(),
 
-                const SizedBox(height: 16),
+                const SizedBox(
+                  height: 16,
+                ),
 
                 _editButton(context),
               ],
@@ -297,7 +209,8 @@ class _AdminProfileScreenState
         Container(
           width: 64,
           height: 64,
-          decoration: const BoxDecoration(
+          decoration:
+              const BoxDecoration(
             color: Color(0xFFF0E9FF),
             shape: BoxShape.circle,
           ),
@@ -317,11 +230,14 @@ class _AdminProfileScreenState
             children: [
               Text(
                 adminName,
-                overflow: TextOverflow.ellipsis,
+                overflow:
+                    TextOverflow.ellipsis,
                 style: const TextStyle(
                   fontSize: 18,
-                  fontWeight: FontWeight.w700,
-                  color: Color(0xFF111827),
+                  fontWeight:
+                      FontWeight.w700,
+                  color:
+                      Color(0xFF111827),
                 ),
               ),
 
@@ -329,10 +245,12 @@ class _AdminProfileScreenState
 
               Text(
                 adminEmail,
-                overflow: TextOverflow.ellipsis,
+                overflow:
+                    TextOverflow.ellipsis,
                 style: const TextStyle(
                   fontSize: 12,
-                  color: Color(0xFF64748B),
+                  color:
+                      Color(0xFF64748B),
                 ),
               ),
 
@@ -340,21 +258,29 @@ class _AdminProfileScreenState
 
               Container(
                 padding:
-                    const EdgeInsets.symmetric(
+                    const EdgeInsets
+                        .symmetric(
                   horizontal: 10,
                   vertical: 5,
                 ),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFDCFCE7),
+                decoration:
+                    BoxDecoration(
+                  color:
+                      const Color(
+                          0xFFDCFCE7),
                   borderRadius:
-                      BorderRadius.circular(20),
+                      BorderRadius.circular(
+                          20),
                 ),
-                child: const Text(
-                  'Admin Harian',
-                  style: TextStyle(
+                child: Text(
+                  adminRole,
+                  style:
+                      const TextStyle(
                     fontSize: 10,
-                    fontWeight: FontWeight.w600,
-                    color: Color(0xFF16A34A),
+                    fontWeight:
+                        FontWeight.w600,
+                    color:
+                        Color(0xFF16A34A),
                   ),
                 ),
               ),
@@ -374,7 +300,9 @@ class _AdminProfileScreenState
   ) {
     return ElevatedButton.icon(
       onPressed: () {
-        _showEditProfileDialog(context);
+        _showEditProfileDialog(
+          context,
+        );
       },
       icon: const Icon(
         Icons.edit_outlined,
@@ -384,13 +312,16 @@ class _AdminProfileScreenState
         'Edit Profil',
         style: TextStyle(
           fontSize: 11,
-          fontWeight: FontWeight.w600,
+          fontWeight:
+              FontWeight.w600,
         ),
       ),
-      style: ElevatedButton.styleFrom(
+      style:
+          ElevatedButton.styleFrom(
         backgroundColor:
             const Color(0xFF7C3AED),
-        foregroundColor: Colors.white,
+        foregroundColor:
+            Colors.white,
         elevation: 0,
         padding:
             const EdgeInsets.symmetric(
@@ -407,7 +338,7 @@ class _AdminProfileScreenState
   }
 
   // =========================================================
-  // EDIT PROFILE DIALOG
+  // EDIT PROFILE
   // =========================================================
 
   void _showEditProfileDialog(
@@ -430,7 +361,8 @@ class _AdminProfileScreenState
       context: context,
       builder: (dialogContext) {
         return AlertDialog(
-          backgroundColor: Colors.white,
+          backgroundColor:
+              Colors.white,
           shape:
               RoundedRectangleBorder(
             borderRadius:
@@ -446,7 +378,6 @@ class _AdminProfileScreenState
                   Color(0xFF111827),
             ),
           ),
-
           content: SizedBox(
             width: 420,
             child: Form(
@@ -455,10 +386,6 @@ class _AdminProfileScreenState
                 mainAxisSize:
                     MainAxisSize.min,
                 children: [
-                  // =================================================
-                  // NAMA
-                  // =================================================
-
                   TextFormField(
                     controller:
                         nameController,
@@ -473,14 +400,14 @@ class _AdminProfileScreenState
                       border:
                           OutlineInputBorder(
                         borderRadius:
-                            BorderRadius
-                                .circular(8),
+                            BorderRadius.circular(
+                                8),
                       ),
                       focusedBorder:
                           OutlineInputBorder(
                         borderRadius:
-                            BorderRadius
-                                .circular(8),
+                            BorderRadius.circular(
+                                8),
                         borderSide:
                             const BorderSide(
                           color:
@@ -491,16 +418,8 @@ class _AdminProfileScreenState
                     validator:
                         (value) {
                       if (value == null ||
-                          value.trim()
-                              .isEmpty) {
+                          value.trim().isEmpty) {
                         return 'Nama tidak boleh kosong';
-                      }
-
-                      if (value
-                              .trim()
-                              .length <
-                          3) {
-                        return 'Nama minimal 3 karakter';
                       }
 
                       return null;
@@ -510,10 +429,6 @@ class _AdminProfileScreenState
                   const SizedBox(
                     height: 16,
                   ),
-
-                  // =================================================
-                  // EMAIL
-                  // =================================================
 
                   TextFormField(
                     controller:
@@ -526,20 +441,19 @@ class _AdminProfileScreenState
                       labelText: 'Email',
                       prefixIcon:
                           const Icon(
-                        Icons
-                            .email_outlined,
+                        Icons.email_outlined,
                       ),
                       border:
                           OutlineInputBorder(
                         borderRadius:
-                            BorderRadius
-                                .circular(8),
+                            BorderRadius.circular(
+                                8),
                       ),
                       focusedBorder:
                           OutlineInputBorder(
                         borderRadius:
-                            BorderRadius
-                                .circular(8),
+                            BorderRadius.circular(
+                                8),
                         borderSide:
                             const BorderSide(
                           color:
@@ -550,21 +464,11 @@ class _AdminProfileScreenState
                     validator:
                         (value) {
                       if (value == null ||
-                          value.trim()
-                              .isEmpty) {
+                          value.trim().isEmpty) {
                         return 'Email tidak boleh kosong';
                       }
 
-                      final email =
-                          value.trim();
-
-                      final emailRegex =
-                          RegExp(
-                        r'^[^@\s]+@[^@\s]+\.[^@\s]+$',
-                      );
-
-                      if (!emailRegex
-                          .hasMatch(email)) {
+                      if (!value.contains('@')) {
                         return 'Format email tidak valid';
                       }
 
@@ -575,11 +479,6 @@ class _AdminProfileScreenState
               ),
             ),
           ),
-
-          // =================================================
-          // BUTTON
-          // =================================================
-
           actions: [
             TextButton(
               onPressed: () {
@@ -598,71 +497,85 @@ class _AdminProfileScreenState
 
             ElevatedButton(
               onPressed: () async {
-                if (!formKey
-                    .currentState!
+                if (!formKey.currentState!
                     .validate()) {
                   return;
                 }
 
-                final name =
+                final prefs =
+                    await SharedPreferences
+                        .getInstance();
+
+                final newName =
                     nameController.text
                         .trim();
 
-                final email =
+                final newEmail =
                     emailController.text
                         .trim();
 
-                try {
-                  await _saveAdminProfile(
-                    name: name,
-                    email: email,
-                  );
+                await prefs.setString(
+                  'name',
+                  newName,
+                );
 
-                  if (!mounted) return;
+                await prefs.setString(
+                  'email',
+                  newEmail,
+                );
 
-                  Navigator.pop(
-                    dialogContext,
-                  );
+                await prefs.setString(
+                  'role',
+                  adminRole,
+                );
 
-                  _showMessage(
-                    context,
-                    'Profil berhasil diperbarui',
-                    const Color(
-                      0xFF16A34A,
-                    ),
-                  );
-                } catch (e) {
-                  if (!mounted) return;
+                if (!mounted) return;
 
-                  _showMessage(
-                    context,
-                    'Gagal menyimpan profil',
-                    const Color(
-                      0xFFEF4444,
-                    ),
-                  );
+                setState(() {
+                  adminName = newName;
+                  adminEmail = newEmail;
+                });
+
+                // Beritahu AdminLayout
+                // bahwa profile berubah.
+                widget.onProfileUpdated
+                    ?.call();
+
+                if (!dialogContext.mounted) {
+                  return;
                 }
+
+                Navigator.pop(
+                  dialogContext,
+                );
+
+                ScaffoldMessenger.of(
+                  context,
+                ).showSnackBar(
+                  const SnackBar(
+                    content: Text(
+                      'Profil berhasil diperbarui',
+                    ),
+                    backgroundColor:
+                        Color(0xFF16A34A),
+                  ),
+                );
               },
               style:
                   ElevatedButton.styleFrom(
                 backgroundColor:
-                    const Color(
-                  0xFF7C3AED,
-                ),
+                    const Color(0xFF7C3AED),
                 foregroundColor:
                     Colors.white,
                 elevation: 0,
                 shape:
                     RoundedRectangleBorder(
                   borderRadius:
-                      BorderRadius.circular(
-                    7,
-                  ),
+                      BorderRadius.circular(7),
                 ),
               ),
-              child: const Text(
-                'Simpan',
-              ),
+              child:
+                  const Text('Simpan'),
             ),
           ],
         );
@@ -746,7 +659,7 @@ class _AdminProfileScreenState
                   Icons
                       .admin_panel_settings_outlined,
                   'Level Akses',
-                  'Admin Harian',
+                  adminRole,
                 ),
 
                 const SizedBox(
@@ -754,14 +667,12 @@ class _AdminProfileScreenState
                 ),
 
                 _infoItem(
-                  Icons
-                      .check_circle_outline,
+                  Icons.check_circle_outline,
                   'Status Akun',
                   'Aktif',
                   valueColor:
                       const Color(
-                    0xFF16A34A,
-                  ),
+                          0xFF16A34A),
                 ),
               ],
             )
@@ -785,7 +696,7 @@ class _AdminProfileScreenState
                         Icons
                             .admin_panel_settings_outlined,
                         'Level Akses',
-                        'Admin Harian',
+                        adminRole,
                       ),
                     ],
                   ),
@@ -809,14 +720,12 @@ class _AdminProfileScreenState
                       ),
 
                       _infoItem(
-                        Icons
-                            .check_circle_outline,
+                        Icons.check_circle_outline,
                         'Status Akun',
                         'Aktif',
                         valueColor:
                             const Color(
-                          0xFF16A34A,
-                        ),
+                                0xFF16A34A),
                       ),
                     ],
                   ),
@@ -845,7 +754,8 @@ class _AdminProfileScreenState
         Container(
           width: 38,
           height: 38,
-          decoration: BoxDecoration(
+          decoration:
+              BoxDecoration(
             color:
                 const Color(0xFFF8FAFC),
             borderRadius:
@@ -880,16 +790,13 @@ class _AdminProfileScreenState
 
               Text(
                 value,
-                overflow:
-                    TextOverflow.ellipsis,
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight:
                       FontWeight.w600,
                   color: valueColor ??
                       const Color(
-                        0xFF334155,
-                      ),
+                          0xFF334155),
                 ),
               ),
             ],
@@ -953,7 +860,7 @@ class _AdminProfileScreenState
             context,
             Icons.lock_outline,
             'Kata Sandi',
-            'Kata sandi terakhir diperbarui',
+            'Kata sandi dapat diperbarui',
             'Ubah',
             const Color(0xFF7C3AED),
           ),
@@ -966,8 +873,7 @@ class _AdminProfileScreenState
 
           _securityItem(
             context,
-            Icons
-                .verified_user_outlined,
+            Icons.verified_user_outlined,
             'Verifikasi Akun',
             'Akun administrator telah terverifikasi',
             'Terverifikasi',
@@ -1000,7 +906,8 @@ class _AdminProfileScreenState
           Container(
             width: 38,
             height: 38,
-            decoration: BoxDecoration(
+            decoration:
+                BoxDecoration(
               color:
                   const Color(0xFFF8FAFC),
               borderRadius:
@@ -1077,9 +984,7 @@ class _AdminProfileScreenState
               shape:
                   RoundedRectangleBorder(
                 borderRadius:
-                    BorderRadius.circular(
-                  7,
-                ),
+                    BorderRadius.circular(7),
               ),
             ),
             child: Text(
@@ -1116,343 +1021,213 @@ class _AdminProfileScreenState
     final confirmPasswordController =
         TextEditingController();
 
-    bool obscureOld = true;
-    bool obscureNew = true;
-    bool obscureConfirm = true;
-
     showDialog(
       context: context,
       builder: (dialogContext) {
-        return StatefulBuilder(
-          builder:
-              (context, setDialogState) {
-            return AlertDialog(
-              backgroundColor:
-                  Colors.white,
-              shape:
-                  RoundedRectangleBorder(
-                borderRadius:
-                    BorderRadius.circular(
-                  12,
-                ),
-              ),
+        return AlertDialog(
+          backgroundColor:
+              Colors.white,
+          shape:
+              RoundedRectangleBorder(
+            borderRadius:
+                BorderRadius.circular(12),
+          ),
 
-              title: const Text(
-                'Ubah Kata Sandi',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight:
-                      FontWeight.w700,
-                ),
-              ),
+          title: const Text(
+            'Ubah Kata Sandi',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight:
+                  FontWeight.w700,
+            ),
+          ),
 
-              content: SizedBox(
-                width: 420,
-                child: Form(
-                  key: formKey,
-                  child: Column(
-                    mainAxisSize:
-                        MainAxisSize.min,
-                    children: [
-                      // =================================================
-                      // OLD PASSWORD
-                      // =================================================
-
-                      TextFormField(
-                        controller:
-                            oldPasswordController,
-                        obscureText:
-                            obscureOld,
-                        decoration:
-                            InputDecoration(
-                          labelText:
-                              'Kata Sandi Lama',
-                          prefixIcon:
-                              const Icon(
-                            Icons
-                                .lock_outline,
-                          ),
-                          suffixIcon:
-                              IconButton(
-                            onPressed: () {
-                              setDialogState(
-                                () {
-                                  obscureOld =
-                                      !obscureOld;
-                                },
-                              );
-                            },
-                            icon: Icon(
-                              obscureOld
-                                  ? Icons
-                                      .visibility_outlined
-                                  : Icons
-                                      .visibility_off_outlined,
-                            ),
-                          ),
-                        ),
-                        validator:
-                            (value) {
-                          if (value ==
-                                  null ||
-                              value.isEmpty) {
-                            return 'Masukkan kata sandi lama';
-                          }
-
-                          return null;
-                        },
+          content: SizedBox(
+            width: 420,
+            child: Form(
+              key: formKey,
+              child: Column(
+                mainAxisSize:
+                    MainAxisSize.min,
+                children: [
+                  TextFormField(
+                    controller:
+                        oldPasswordController,
+                    obscureText: true,
+                    decoration:
+                        const InputDecoration(
+                      labelText:
+                          'Kata Sandi Lama',
+                      prefixIcon:
+                          Icon(
+                        Icons.lock_outline,
                       ),
+                    ),
+                    validator: (value) {
+                      if (value == null ||
+                          value.isEmpty) {
+                        return 'Masukkan kata sandi lama';
+                      }
 
-                      const SizedBox(
-                        height: 14,
-                      ),
-
-                      // =================================================
-                      // NEW PASSWORD
-                      // =================================================
-
-                      TextFormField(
-                        controller:
-                            newPasswordController,
-                        obscureText:
-                            obscureNew,
-                        decoration:
-                            InputDecoration(
-                          labelText:
-                              'Kata Sandi Baru',
-                          prefixIcon:
-                              const Icon(
-                            Icons
-                                .lock_outline,
-                          ),
-                          suffixIcon:
-                              IconButton(
-                            onPressed: () {
-                              setDialogState(
-                                () {
-                                  obscureNew =
-                                      !obscureNew;
-                                },
-                              );
-                            },
-                            icon: Icon(
-                              obscureNew
-                                  ? Icons
-                                      .visibility_outlined
-                                  : Icons
-                                      .visibility_off_outlined,
-                            ),
-                          ),
-                        ),
-                        validator:
-                            (value) {
-                          if (value ==
-                                  null ||
-                              value.length <
-                                  6) {
-                            return 'Minimal 6 karakter';
-                          }
-
-                          return null;
-                        },
-                      ),
-
-                      const SizedBox(
-                        height: 14,
-                      ),
-
-                      // =================================================
-                      // CONFIRM PASSWORD
-                      // =================================================
-
-                      TextFormField(
-                        controller:
-                            confirmPasswordController,
-                        obscureText:
-                            obscureConfirm,
-                        decoration:
-                            InputDecoration(
-                          labelText:
-                              'Konfirmasi Kata Sandi',
-                          prefixIcon:
-                              const Icon(
-                            Icons
-                                .lock_outline,
-                          ),
-                          suffixIcon:
-                              IconButton(
-                            onPressed: () {
-                              setDialogState(
-                                () {
-                                  obscureConfirm =
-                                      !obscureConfirm;
-                                },
-                              );
-                            },
-                            icon: Icon(
-                              obscureConfirm
-                                  ? Icons
-                                      .visibility_outlined
-                                  : Icons
-                                      .visibility_off_outlined,
-                            ),
-                          ),
-                        ),
-                        validator:
-                            (value) {
-                          if (value ==
-                                  null ||
-                              value.isEmpty) {
-                            return 'Konfirmasi kata sandi';
-                          }
-
-                          if (value !=
-                              newPasswordController
-                                  .text) {
-                            return 'Kata sandi tidak sama';
-                          }
-
-                          return null;
-                        },
-                      ),
-                    ],
+                      return null;
+                    },
                   ),
-                ),
+
+                  const SizedBox(
+                    height: 14,
+                  ),
+
+                  TextFormField(
+                    controller:
+                        newPasswordController,
+                    obscureText: true,
+                    decoration:
+                        const InputDecoration(
+                      labelText:
+                          'Kata Sandi Baru',
+                      prefixIcon:
+                          Icon(
+                        Icons.lock_outline,
+                      ),
+                    ),
+                    validator: (value) {
+                      if (value == null ||
+                          value.length < 6) {
+                        return 'Minimal 6 karakter';
+                      }
+
+                      return null;
+                    },
+                  ),
+
+                  const SizedBox(
+                    height: 14,
+                  ),
+
+                  TextFormField(
+                    controller:
+                        confirmPasswordController,
+                    obscureText: true,
+                    decoration:
+                        const InputDecoration(
+                      labelText:
+                          'Konfirmasi Kata Sandi',
+                      prefixIcon:
+                          Icon(
+                        Icons.lock_outline,
+                      ),
+                    ),
+                    validator: (value) {
+                      if (value !=
+                          newPasswordController
+                              .text) {
+                        return 'Kata sandi tidak sama';
+                      }
+
+                      return null;
+                    },
+                  ),
+                ],
               ),
+            ),
+          ),
 
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.pop(
-                      dialogContext,
-                    );
-                  },
-                  child:
-                      const Text('Batal'),
-                ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(
+                  dialogContext,
+                );
+              },
+              child:
+                  const Text('Batal'),
+            ),
 
-                ElevatedButton(
-                  onPressed: () async {
-                    if (!formKey
-                        .currentState!
-                        .validate()) {
-                      return;
-                    }
+            ElevatedButton(
+              onPressed: () async {
+                if (!formKey.currentState!
+                    .validate()) {
+                  return;
+                }
 
-                    final prefs =
-                        await SharedPreferences
-                            .getInstance();
+                final prefs =
+                    await SharedPreferences
+                        .getInstance();
 
-                    final savedPassword =
+                final oldPassword =
+                    prefs.getString(
+                          'password',
+                        ) ??
                         prefs.getString(
-                      _passwordKey,
-                    );
+                          'admin_password',
+                        ) ??
+                        'admin123';
 
-                    final oldPassword =
-                        oldPasswordController
-                            .text;
+                if (oldPassword !=
+                    oldPasswordController
+                        .text) {
+                  if (!dialogContext.mounted) {
+                    return;
+                  }
 
-                    // =================================================
-                    // CEK PASSWORD LAMA
-                    // =================================================
+                  ScaffoldMessenger.of(
+                    dialogContext,
+                  ).showSnackBar(
+                    const SnackBar(
+                      content: Text(
+                        'Kata sandi lama salah',
+                      ),
+                      backgroundColor:
+                          Color(0xFFEF4444),
+                    ),
+                  );
 
-                    if (savedPassword !=
-                        oldPassword) {
-                      if (!mounted) return;
+                  return;
+                }
 
-                      ScaffoldMessenger
-                          .of(context)
-                          .showSnackBar(
-                        const SnackBar(
-                          content: Text(
-                            'Kata sandi lama salah',
-                          ),
-                          backgroundColor:
-                              Color(
-                            0xFFEF4444,
-                          ),
-                        ),
-                      );
+                await prefs.setString(
+                  'password',
+                  newPasswordController
+                      .text,
+                );
 
-                      return;
-                    }
+                await prefs.remove(
+                  'admin_password',
+                );
 
-                    // =================================================
-                    // SIMPAN PASSWORD BARU
-                    // =================================================
+                if (!dialogContext.mounted) {
+                  return;
+                }
 
-                    await prefs.setString(
-                      _passwordKey,
-                      newPasswordController
-                          .text,
-                    );
+                Navigator.pop(
+                  dialogContext,
+                );
 
-                    if (!mounted) return;
-
-                    Navigator.pop(
-                      dialogContext,
-                    );
-
-                    _showMessage(
-                      context,
+                ScaffoldMessenger.of(
+                  context,
+                ).showSnackBar(
+                  const SnackBar(
+                    content: Text(
                       'Kata sandi berhasil diubah',
-                      const Color(
-                        0xFF16A34A,
-                      ),
-                    );
-                  },
-                  style:
-                      ElevatedButton.styleFrom(
+                    ),
                     backgroundColor:
-                        const Color(
-                      0xFF7C3AED,
-                    ),
-                    foregroundColor:
-                        Colors.white,
-                    elevation: 0,
-                    shape:
-                        RoundedRectangleBorder(
-                      borderRadius:
-                          BorderRadius.circular(
-                        7,
-                      ),
-                    ),
+                        Color(0xFF16A34A),
                   ),
-                  child:
-                      const Text('Simpan'),
-                ),
-              ],
-            );
-          },
+                );
+              },
+              style:
+                  ElevatedButton.styleFrom(
+                backgroundColor:
+                    const Color(0xFF7C3AED),
+                foregroundColor:
+                    Colors.white,
+              ),
+              child:
+                  const Text('Simpan'),
+            ),
+          ],
         );
       },
-    );
-  }
-
-  // =========================================================
-  // MESSAGE
-  // =========================================================
-
-  void _showMessage(
-    BuildContext context,
-    String message, [
-    Color? color,
-  ]) {
-    ScaffoldMessenger.of(context)
-        .hideCurrentSnackBar();
-
-    ScaffoldMessenger.of(context)
-        .showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor:
-            color ??
-                const Color(0xFF7C3AED),
-        behavior:
-            SnackBarBehavior.floating,
-        margin:
-            const EdgeInsets.all(16),
-      ),
     );
   }
 }
